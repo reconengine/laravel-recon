@@ -15,7 +15,7 @@ class BaseTest extends Orchestra
         $this->loadMigrationsFrom(__DIR__ . '/Models/migrations');
 
         LaravelMlFacade::partialMock()->shouldReceive('detectModelPath')->andReturn(__DIR__ . '/Models');
-        LaravelMlFacade::partialMock()->shouldReceive('detectModelNamespace')->andReturn('Zach\\LaravelMl\\Tests\\Models');
+        LaravelMlFacade::partialMock()->shouldReceive('detectModelNamespace')->andReturn('LaravelMl\\Tests\\Models');
     }
 
     protected function getPackageProviders($app)
