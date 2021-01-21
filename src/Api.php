@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Http;
 
 class Api
 {
-    const HOST = 'http://localhost:8000/api';
+    const HOST = 'https://staging.laravelml.com/api';
 
     public function __construct()
     {
