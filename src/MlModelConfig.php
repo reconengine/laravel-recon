@@ -31,7 +31,7 @@ class MlModelConfig
      * @param mixed $type
      * @return MlModelConfig
      */
-    public function setType($type)
+    public function setType(string $type)
     {
         if (! in_array($type, self::TYPES)) {
             throw new \Exception('Unsupported model type. Options are: ' . collect(self::TYPES)->join(', '));
@@ -73,7 +73,7 @@ class MlModelConfig
      */
     public function setId($id)
     {
-        $this->id = $id;
+        $this->id = strval($id);
         return $this;
     }
 
