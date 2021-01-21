@@ -160,7 +160,9 @@ class ModelsSync extends Command
     protected function delete($model)
     {
         if ($this->confirm('Are you sure you want to delete this model? This cannot be undone.')) {
-            ApiFacade::deleteModel($model->ml()->name());
+            $response = ApiFacade::deleteModel($model->ml()->name());
+
+            $response->throw();
         }
 
         return 0;

@@ -47,9 +47,11 @@ class Api
                 return $model->toMlJson();
             });
 
-            $this->http()->post(self::HOST . "/models/{$modelName}/train", [
+            $response = $this->http()->post(self::HOST . "/models/{$modelName}/train", [
                 'samples' => $modelJson->toArray(),
             ]);
+
+            $response->throw();
 
             if ($progress) {
                 $progress($modelItems);
