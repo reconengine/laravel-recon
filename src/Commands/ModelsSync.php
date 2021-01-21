@@ -50,7 +50,7 @@ class ModelsSync extends Command
     {
         $modelClasses = LaravelMlFacade::detectMlModels();
 
-        if (! $modelClasses) {
+        if ($modelClasses->isEmpty()) {
             $this->error('No Laravel ML models detected. Did you set it up correctly?');
             return 1;
         }

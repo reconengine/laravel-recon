@@ -6,10 +6,21 @@ use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use LaravelMl\Api;
+use LaravelMl\LaravelMlFacade;
 use LaravelMl\Tests\Models\TestModel;
 
 class ModelSyncCommandTest extends BaseTest
 {
+    /** @test */
+    public function modelFailsCalmlyWhenNoDetectedModelsExist()
+    {
+        LaravelMlFacade::shouldReceive('detectMlModels')->andReturn(collect());
+
+        $this->artisan('ml')
+            ->expectsOutput('No Laravel ML models detected. Did you set it up correctly?')
+            ->assertExitCode(1);
+    }
+
     /** @test */
     public function modelMlCommandHandlesInvalidModel()
     {
