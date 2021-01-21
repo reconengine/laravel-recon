@@ -48,7 +48,24 @@ class ModelsSync extends Command
      */
     public function handle()
     {
-        list ($choice, $modelClass) = $this->promptModelClass();
+        $modelClasses = LaravelMlFacade::detectMlModels();
+
+        if (! $modelClasses) {
+            $this->error('No Laravel ML models detected. Did you set it up correctly?');
+            return 1;
+        }
+
+        $modelClasses = collect($modelClasses)->mapWithKeys(function (string $modelClass) {
+            $model = new $modelClass;
+            return [$model->ml()->name() => $model];
+        });
+
+        $choice = $this->choice(
+            'Which ML Model would you like to work with?',
+            $modelClasses->keys()->toArray()
+        );
+
+        $modelClass = $modelClasses->get($choice);
 
         if (! $modelClass) {
             $this->error('Invalid choice. Please try again.');
@@ -66,23 +83,6 @@ class ModelsSync extends Command
                 $this->error('Invalid choice. Please try again.');
                 return 1;
         }
-    }
-
-    protected function promptModelClass()
-    {
-        $modelClasses = LaravelMlFacade::detectMlModels();
-
-        $modelClasses = collect($modelClasses)->mapWithKeys(function (string $modelClass) {
-            $model = new $modelClass;
-            return [$model->ml()->name() => $model];
-        });
-
-        $choice = $this->choice(
-            'Which ML Model would you like to work with?',
-            $modelClasses->keys()->toArray()
-        );
-
-        return [$choice, $modelClasses->get($choice)];
     }
 
     protected function printModelInformation($model)
