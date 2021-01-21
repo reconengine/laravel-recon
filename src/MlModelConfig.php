@@ -54,7 +54,7 @@ class MlModelConfig
     /**
      * @return mixed
      */
-    public function getName()
+    public function name()
     {
         return $this->name;
     }
@@ -62,7 +62,7 @@ class MlModelConfig
     /**
      * @return mixed
      */
-    public function getType()
+    public function type()
     {
         return $this->type;
     }
@@ -80,7 +80,7 @@ class MlModelConfig
     /**
      * @return mixed
      */
-    public function getId()
+    public function id()
     {
         return $this->id;
     }

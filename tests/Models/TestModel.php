@@ -36,7 +36,7 @@ class TestModel extends Model
         return $this->salary;
     }
 
-    protected function config(): MlModelConfig
+    public function ml(): MlModelConfig
     {
         return MlModelConfig::make()
             ->setName('test_models')

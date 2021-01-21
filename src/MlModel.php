@@ -27,17 +27,7 @@ trait MlModel
     /**
      * @return string unique model name
      */
-    abstract protected function config(): MlModelConfig;
-
-    public function getMlName()
-    {
-        return $this->config()->getName();
-    }
-
-    public function getMlId()
-    {
-        return $this->config()->getId() ?? $this->id;
-    }
+    abstract public function ml(): MlModelConfig;
 
     /**
      * @return array
@@ -47,7 +37,7 @@ trait MlModel
         return [
             'features' => $this->features(),
             'label' => $this->label(),
-            'identifier' => $this->getMlId(),
+            'identifier' => $this->ml()->id(),
         ];
     }
 }

@@ -2,72 +2,92 @@
 
 namespace LaravelMl;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 
 class Api
 {
-    const HOST = 'https://test.com/api';
+    const HOST = 'http://localhost:8000/api';
 
     public function __construct()
     {
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Models
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     public function showModel(string $name)
     {
-        return Http::withToken(config('laravel-ml.token'))->get(self::HOST . "/models/{$name}");
+        return $this->http()->get(self::HOST . "/models/{$name}");
     }
 
     public function updateModel(string $name, array $data)
     {
-        return Http::withToken(config('laravel-ml.token'))->put(self::HOST . "/models/{$name}", $data);
+        return $this->http()->put(self::HOST . "/models/{$name}", $data);
     }
 
     public function storeModel(string $name, array $data)
     {
-        return Http::withToken(config('laravel-ml.token'))->post(self::HOST . "/models/{$name}", $data);
+        return $this->http()->post(self::HOST . "/models", [
+            'name' => $name,
+            ] + $data);
     }
 
+    public function deleteModel(string $name)
+    {
+        return $this->http()->delete(self::HOST . "/models/{$name}");
+    }
+
+    public function syncModel($model, callable $progress = null)
+    {
+        $modelName = $model->ml()->name();
+        $model::chunk(5000, function (Collection $modelItems) use ($modelName, $progress) {
+            $modelJson = $modelItems->map(function ($model) {
+                return $model->toMlJson();
+            });
+
+            $this->http()->post(self::HOST . "/models/{$modelName}/train", [
+                'samples' => $modelJson->toArray(),
+            ]);
+
+            if ($progress) {
+                $progress($modelItems);
+            }
+        });
+
+        return true;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Model Items
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     public function createModelItem($model)
     {
-        $modelName = $model->getMlName();
+        $modelName = $model->ml()->name();
 
-        return Http::withToken(config('laravel-ml.token'))
-            ->post(self::HOST . "/models/{$modelName}/items", $model->toMlJson());
+        return $this->http()->post(self::HOST . "/models/{$modelName}/items", $model->toMlJson());
     }
 
     public function updateModelItem($modelItem)
     {
-        $modelName = $modelItem->getMlName();
-        $modelItemIdentifier = $modelItem->getMlId();
+        $modelName = $modelItem->ml()->name();
+        $modelItemIdentifier = $modelItem->ml()->id();
 
-        return Http::withToken(config('laravel-ml.token'))
-            ->put(self::HOST . "/models/{$modelName}/items/{$modelItemIdentifier}", $modelItem->toMlJson());
+        return $this->http()->put(self::HOST . "/models/{$modelName}/items/{$modelItemIdentifier}", $modelItem->toMlJson());
     }
 
     public function deleteModelItem($modelName, $modelItemIdentifier)
     {
-        return Http::withToken(config('laravel-ml.token'))
-            ->delete(self::HOST . "/models/{$modelName}/items/{$modelItemIdentifier}");
+        return $this->http()->delete(self::HOST . "/models/{$modelName}/items/{$modelItemIdentifier}");
     }
 
-    public function train($models)
+    protected function http()
     {
-        $models = is_array($models) ? $models : [$models];
-        $models = collect($models);
-
-        if ($models->isEmpty()) {
-            return null;
-        }
-
-        $modelInstance = $models->first();
-        $modelName = $modelInstance->getMlName();
-        $modelJson = $models->map(function ($model) {
-            return $model->toMlJson();
-        });
-
-        return Http::withToken(config('laravel-ml.token'))->post(self::HOST . "/models/{$modelName}/train", [
-            'samples' => $modelJson->toArray(),
-        ]);
+        return Http::withToken(config('laravel-ml.token'))
+            ->withHeaders([
+                'Accept' => 'application/json',
+                'Content-type' => 'application/json',
+            ]);
     }
 }

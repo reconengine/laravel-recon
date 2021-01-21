@@ -26,8 +26,8 @@ class DeleteModelItemJob implements ShouldQueue
      */
     public function __construct($modelItem)
     {
-        $this->modelItemIdentifier = $modelItem->getMlId();
-        $this->modelName = $modelItem->getMlName();
+        $this->modelItemIdentifier = $modelItem->ml()->id();
+        $this->modelName = $modelItem->ml()->name();
     }
 
     /**

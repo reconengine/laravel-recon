@@ -26,7 +26,7 @@ class ModelObserverTest extends BaseTest
         ]);
 
         Http::assertSent(function (Request $request) use ($testModel) {
-            return Str::contains($request->url(), ['/models/' . $testModel->getMlName() . '/items'])
+            return Str::contains($request->url(), ['/models/' . $testModel->ml()->name() . '/items'])
                 && $request->method() === 'POST'
                 && $request['features'][0] === 'zach'
                 && $request['features'][1] === 25
@@ -38,20 +38,20 @@ class ModelObserverTest extends BaseTest
     /** @test */
     public function modelUpdate()
     {
+        Http::fake();
+
         $testModel = TestModel::create([
             'name' => 'zach',
             'age' => 25,
             'salary' => 50000,
         ]);
 
-        Http::fake();
-
         $testModel->update([
             'salary' => 60000,
         ]);
 
         Http::assertSent(function (Request $request) use ($testModel) {
-            return Str::contains($request->url(), ['/models/' . $testModel->getMlName() . '/items/' . $testModel->getMlId()])
+            return Str::contains($request->url(), ['/models/' . $testModel->ml()->name() . '/items/' . $testModel->ml()->id()])
                 && $request->method() === 'PUT'
                 && $request['features'][0] === 'zach'
                 && $request['features'][1] === 25
@@ -63,18 +63,18 @@ class ModelObserverTest extends BaseTest
     /** @test */
     public function modelDelete()
     {
+        Http::fake();
+
         $testModel = TestModel::create([
             'name' => 'zach',
             'age' => 25,
             'salary' => 50000,
         ]);
 
-        Http::fake();
-
         $testModel->delete();
 
         Http::assertSent(function (Request $request) use ($testModel) {
-            return Str::contains($request->url(), ['/models/' . $testModel->getMlName() . '/items/' . $testModel->getMlId()])
+            return Str::contains($request->url(), ['/models/' . $testModel->ml()->name() . '/items/' . $testModel->ml()->id()])
                 && $request->method() === 'DELETE';
         });
     }
