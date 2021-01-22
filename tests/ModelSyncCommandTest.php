@@ -71,7 +71,7 @@ class ModelSyncCommandTest extends BaseTest
             ->assertExitCode(0);
 
         Http::assertSent(function (Request $request) use ($modelName, $type) {
-            return Str::contains($request->url(), ['/models'])
+            return Str::contains($request->url(), ['/api/models'])
                 && $request->method() === 'POST'
                 && $request['name'] === $modelName
                 && $request['type'] === $type;
@@ -104,13 +104,13 @@ class ModelSyncCommandTest extends BaseTest
             ->assertExitCode(0);
 
         Http::assertSent(function (Request $request) use ($modelName, $existingModel) {
-            return Str::contains($request->url(), ["/models/{$modelName}/train"])
+            return Str::contains($request->url(), ["/api/models/{$modelName}/train"])
                 && $request->method() === 'POST'
                 && sizeof($request['samples']) === 1
                 && $request['samples'][0]['features'][0] === 'zach'
                 && $request['samples'][0]['features'][1] === 25
                 && $request['samples'][0]['label'] === 50000
-                && $request['samples'][0]['identifier'] === $existingModel->id;
+                && $request['samples'][0]['identifier'] === strval($existingModel->id);
         });
     }
 
@@ -120,7 +120,9 @@ class ModelSyncCommandTest extends BaseTest
         $modelName = (new TestModel())->ml()->name();
 
         Http::fake([
-            '*' => Http::response([], 404),
+            Api::HOST . '/models/' . $modelName => Http::sequence()
+                ->pushStatus(404) // the SHOW
+                ->pushStatus(200), // the DELETE
         ]);
 
         $this->artisan('ml')
@@ -131,7 +133,7 @@ class ModelSyncCommandTest extends BaseTest
             ->assertExitCode(0);
 
         Http::assertSent(function (Request $request) use ($modelName) {
-            return Str::contains($request->url(), ['/models/' . $modelName])
+            return Str::contains($request->url(), ['/api/models/' . $modelName])
                 && $request->method() === 'DELETE';
         });
     }

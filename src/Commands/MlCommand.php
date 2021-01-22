@@ -13,7 +13,7 @@ use LaravelMl\ApiFacade;
 use LaravelMl\LaravelMl;
 use LaravelMl\LaravelMlFacade;
 
-class ModelsSync extends Command
+class MlCommand extends Command
 {
     /**
      * The name and signature of the console command.

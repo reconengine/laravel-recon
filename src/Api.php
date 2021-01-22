@@ -10,6 +10,9 @@ class Api
 {
     const HOST = 'https://staging.laravelml.com/api';
 
+    /**
+     * Api constructor.
+     */
     public function __construct()
     {
     }
@@ -17,16 +20,30 @@ class Api
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /// Models
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     * @param string $name
+     * @return mixed
+     */
     public function showModel(string $name)
     {
         return $this->http()->get(self::HOST . "/models/{$name}");
     }
 
+    /**
+     * @param string $name
+     * @param array $data
+     * @return mixed
+     */
     public function updateModel(string $name, array $data)
     {
         return $this->http()->put(self::HOST . "/models/{$name}", $data);
     }
 
+    /**
+     * @param string $name
+     * @param array $data
+     * @return mixed
+     */
     public function storeModel(string $name, array $data)
     {
         return $this->http()->post(self::HOST . "/models", [
@@ -34,11 +51,20 @@ class Api
             ] + $data);
     }
 
+    /**
+     * @param string $name
+     * @return mixed
+     */
     public function deleteModel(string $name)
     {
         return $this->http()->delete(self::HOST . "/models/{$name}");
     }
 
+    /**
+     * @param $model
+     * @param callable|null $progress
+     * @return bool
+     */
     public function syncModel($model, callable $progress = null)
     {
         $modelName = $model->ml()->name();
@@ -64,6 +90,10 @@ class Api
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /// Model Items
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     * @param $model
+     * @return mixed
+     */
     public function createModelItem($model)
     {
         $modelName = $model->ml()->name();
@@ -71,6 +101,10 @@ class Api
         return $this->http()->post(self::HOST . "/models/{$modelName}/items", $model->toMlJson());
     }
 
+    /**
+     * @param $modelItem
+     * @return mixed
+     */
     public function updateModelItem($modelItem)
     {
         $modelName = $modelItem->ml()->name();
@@ -79,11 +113,34 @@ class Api
         return $this->http()->put(self::HOST . "/models/{$modelName}/items/{$modelItemIdentifier}", $modelItem->toMlJson());
     }
 
+    /**
+     * @param $modelName
+     * @param $modelItemIdentifier
+     * @return \Illuminate\Http\Client\Response
+     */
     public function deleteModelItem($modelName, $modelItemIdentifier)
     {
         return $this->http()->delete(self::HOST . "/models/{$modelName}/items/{$modelItemIdentifier}");
     }
 
+    /**
+     * @param $modelName
+     * @param $samples
+     */
+    public function predict($modelName, array $samples)
+    {
+        $response = $this->http()->post(self::HOST . "/models/{$modelName}/predict", [
+            'samples' => $samples,
+        ]);
+
+        $response->throw();
+
+        return $response->json();
+    }
+
+    /**
+     * @return \Illuminate\Http\Client\PendingRequest
+     */
     protected function http()
     {
         return Http::withToken(config('laravel-ml.token'))

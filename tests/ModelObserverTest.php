@@ -26,12 +26,12 @@ class ModelObserverTest extends BaseTest
         ]);
 
         Http::assertSent(function (Request $request) use ($testModel) {
-            return Str::contains($request->url(), ['/models/' . $testModel->ml()->name() . '/items'])
+            return Str::contains($request->url(), ['/api/models/' . $testModel->ml()->name() . '/items'])
                 && $request->method() === 'POST'
                 && $request['features'][0] === 'zach'
                 && $request['features'][1] === 25
                 && $request['label'] === 50000
-                && $request['identifier'] === $testModel->id;
+                && $request['identifier'] === strval($testModel->id);
         });
     }
 
@@ -51,12 +51,12 @@ class ModelObserverTest extends BaseTest
         ]);
 
         Http::assertSent(function (Request $request) use ($testModel) {
-            return Str::contains($request->url(), ['/models/' . $testModel->ml()->name() . '/items/' . $testModel->ml()->id()])
+            return Str::contains($request->url(), ['/api/models/' . $testModel->ml()->name() . '/items/' . $testModel->ml()->id()])
                 && $request->method() === 'PUT'
                 && $request['features'][0] === 'zach'
                 && $request['features'][1] === 25
                 && $request['label'] === 60000
-                && $request['identifier'] === $testModel->id;
+                && $request['identifier'] === strval($testModel->id);
         });
     }
 
@@ -74,7 +74,7 @@ class ModelObserverTest extends BaseTest
         $testModel->delete();
 
         Http::assertSent(function (Request $request) use ($testModel) {
-            return Str::contains($request->url(), ['/models/' . $testModel->ml()->name() . '/items/' . $testModel->ml()->id()])
+            return Str::contains($request->url(), ['/api/models/' . $testModel->ml()->name() . '/items/' . $testModel->ml()->id()])
                 && $request->method() === 'DELETE';
         });
     }

@@ -30,6 +30,16 @@ trait MlModel
     abstract public function ml(): MlModelConfig;
 
     /**
+     * @return mixed
+     */
+    public function predict()
+    {
+        $response = $this->predictRaw();
+
+        return $response['data'][0];
+    }
+
+    /**
      * @return array
      */
     public function toMlJson()
@@ -39,5 +49,13 @@ trait MlModel
             'label' => $this->label(),
             'identifier' => $this->ml()->id(),
         ];
+    }
+
+    /**
+     * @return array JSON response array
+     */
+    protected function predictRaw()
+    {
+        return ApiFacade::predict($this->ml()->name(), [$this->features()]);
     }
 }

@@ -3,7 +3,7 @@
 namespace LaravelMl;
 
 use Illuminate\Support\ServiceProvider;
-use LaravelMl\Commands\ModelsSync;
+use LaravelMl\Commands\MlCommand;
 
 class LaravelMlServiceProvider extends ServiceProvider
 {
@@ -42,7 +42,7 @@ class LaravelMlServiceProvider extends ServiceProvider
 
             // Registering package commands.
             $this->commands([
-                ModelsSync::class,
+                MlCommand::class,
             ]);
         }
     }
