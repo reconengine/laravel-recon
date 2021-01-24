@@ -19,6 +19,7 @@ class MlModelConfig
     const TYPES = [
         self::TYPE_CATEGORICAL,
         self::TYPE_CONTINUOUS,
+        self::TYPE_ANOMALY,
     ];
     const DATATYPES = [
         self::DATATYPE_CATEGORICAL,
