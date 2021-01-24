@@ -11,4 +11,6 @@ use LaravelMl\MlModelConfig;
 abstract class MockMlTestModel
 {
     use MlModel;
+
+    public $id = null;
 }

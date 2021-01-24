@@ -12,6 +12,8 @@ class TestModel extends Model
 {
     use MlModel;
 
+    public $isTrainable = true;
+
     protected $fillable = [
         'name',
         'age',
@@ -43,5 +45,13 @@ class TestModel extends Model
             ->setType(MlModelConfig::TYPE_CONTINUOUS)
             ->setDatatype(MlModelConfig::DATATYPE_CONTINUOUS)
         ;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isTrainable(): bool
+    {
+        return $this->isTrainable;
     }
 }

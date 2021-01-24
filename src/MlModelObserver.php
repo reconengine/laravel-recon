@@ -10,18 +10,33 @@ use LaravelMl\Jobs\UpdateModelItemJob;
 
 class MlModelObserver
 {
+    /**
+     * @param MlModel $modelItem
+     */
     public function created($modelItem)
     {
-        dispatch(new CreateModelItemJob($modelItem));
+        if ($modelItem->isTrainable()) {
+            dispatch(new CreateModelItemJob($modelItem));
+        }
     }
 
+    /**
+     * @param MlModel $modelItem
+     */
     public function updated($modelItem)
     {
-        dispatch(new UpdateModelItemJob($modelItem));
+        if ($modelItem->isTrainable()) {
+            dispatch(new UpdateModelItemJob($modelItem));
+        }
     }
 
+    /**
+     * @param MlModel $modelItem
+     */
     public function deleted($modelItem)
     {
-        dispatch(new DeleteModelItemJob($modelItem));
+        if ($modelItem->isTrainable()) {
+            dispatch(new DeleteModelItemJob($modelItem));
+        }
     }
 }

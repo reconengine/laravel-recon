@@ -38,6 +38,10 @@ trait MlModel
         // TODO: gives move control
         $this->config($config);
 
+        if (null === $config->id()) {
+            $config->setId($this->id);
+        }
+
         return $config;
     }
 
@@ -49,6 +53,14 @@ trait MlModel
         $response = $this->predictRaw();
 
         return $response['data'][0];
+    }
+
+    /**
+     * @return bool
+     */
+    public function isTrainable()
+    {
+        return true;
     }
 
     /**

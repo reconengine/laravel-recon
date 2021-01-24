@@ -70,8 +70,15 @@ class Api
         $modelName = $model->ml()->name();
         $model::chunk(5000, function (Collection $modelItems) use ($modelName, $progress) {
             $modelJson = $modelItems->map(function ($model) {
-                return $model->toMlJson();
-            });
+                /**
+                 * @var MlModel $model
+                 */
+                if ($model->isTrainable()) {
+                    return $model->toMlJson();
+                }
+
+                return null;
+            })->filter();
 
             $response = $this->http()->post(self::HOST . "/models/{$modelName}/train", [
                 'samples' => $modelJson->toArray(),
