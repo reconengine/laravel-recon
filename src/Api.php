@@ -96,17 +96,21 @@ class Api
      */
     public function createModelItem($model)
     {
+        $model->ml()->validateItem();
+        $model->ml()->validateData($model);
         $modelName = $model->ml()->name();
 
         return $this->http()->post(self::HOST . "/models/{$modelName}/items", $model->toMlJson());
     }
 
     /**
-     * @param $modelItem
+     * @param MlModel $modelItem
      * @return mixed
      */
     public function updateModelItem($modelItem)
     {
+        $modelItem->ml()->validateItem();
+        $modelItem->ml()->validateData($modelItem);
         $modelName = $modelItem->ml()->name();
         $modelItemIdentifier = $modelItem->ml()->id();
 
@@ -114,8 +118,8 @@ class Api
     }
 
     /**
-     * @param $modelName
-     * @param $modelItemIdentifier
+     * @param string $modelName
+     * @param string $modelItemIdentifier
      * @return \Illuminate\Http\Client\Response
      */
     public function deleteModelItem($modelName, $modelItemIdentifier)
@@ -124,13 +128,20 @@ class Api
     }
 
     /**
-     * @param $modelName
-     * @param $samples
+     * @param MlModel $modelItem
+     * @param array $samples
+     * @return array|mixed
+     * @throws \Illuminate\Http\Client\RequestException
      */
-    public function predict($modelName, array $samples)
+    public function predict($modelItem)
     {
+        $modelItem->ml()->validateItem();
+        $modelItem->ml()->validateData($modelItem);
+
+        $modelName = $modelItem->ml()->name();
+
         $response = $this->http()->post(self::HOST . "/models/{$modelName}/predict", [
-            'samples' => $samples,
+            'samples' => [$modelItem->features()],
         ]);
 
         $response->throw();

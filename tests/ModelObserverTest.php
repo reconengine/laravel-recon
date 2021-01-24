@@ -5,11 +5,6 @@ namespace LaravelMl\Tests;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
-use Orchestra\Testbench\TestCase;
-use LaravelMl\Api;
-use LaravelMl\LaravelMl;
-use LaravelMl\LaravelMlFacade;
-use LaravelMl\LaravelMlServiceProvider;
 use LaravelMl\Tests\Models\TestModel;
 
 class ModelObserverTest extends BaseTest
@@ -28,8 +23,7 @@ class ModelObserverTest extends BaseTest
         Http::assertSent(function (Request $request) use ($testModel) {
             return Str::contains($request->url(), ['/api/models/' . $testModel->ml()->name() . '/items'])
                 && $request->method() === 'POST'
-                && $request['features'][0] === 'zach'
-                && $request['features'][1] === 25
+                && $request['features'][0] === 25
                 && $request['label'] === 50000
                 && $request['identifier'] === strval($testModel->id);
         });
@@ -53,8 +47,7 @@ class ModelObserverTest extends BaseTest
         Http::assertSent(function (Request $request) use ($testModel) {
             return Str::contains($request->url(), ['/api/models/' . $testModel->ml()->name() . '/items/' . $testModel->ml()->id()])
                 && $request->method() === 'PUT'
-                && $request['features'][0] === 'zach'
-                && $request['features'][1] === 25
+                && $request['features'][0] === 25
                 && $request['label'] === 60000
                 && $request['identifier'] === strval($testModel->id);
         });

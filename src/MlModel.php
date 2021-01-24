@@ -17,17 +17,29 @@ trait MlModel
     /**
      * @return array Array of values that make up this sample.
      */
-    abstract protected function features(): array;
+    abstract public function features(): array;
 
     /**
      * @return mixed A known label. This is either a string for 'categorical' or numeric for 'continuous'.
      */
-    abstract protected function label();
+    abstract public function label();
 
     /**
      * @return string unique model name
      */
-    abstract public function ml(): MlModelConfig;
+    abstract protected function config(MlModelConfig $config);
+
+    /**
+     * @return string unique model name
+     */
+    public function ml(): MlModelConfig {
+        $config = MlModelConfig::make();
+
+        // TODO: gives move control
+        $this->config($config);
+
+        return $config;
+    }
 
     /**
      * @return mixed
@@ -56,6 +68,6 @@ trait MlModel
      */
     protected function predictRaw()
     {
-        return ApiFacade::predict($this->ml()->name(), [$this->features()]);
+        return ApiFacade::predict($this);
     }
 }

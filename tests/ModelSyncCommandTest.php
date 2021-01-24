@@ -107,8 +107,7 @@ class ModelSyncCommandTest extends BaseTest
             return Str::contains($request->url(), ["/api/models/{$modelName}/train"])
                 && $request->method() === 'POST'
                 && sizeof($request['samples']) === 1
-                && $request['samples'][0]['features'][0] === 'zach'
-                && $request['samples'][0]['features'][1] === 25
+                && $request['samples'][0]['features'][0] === 25
                 && $request['samples'][0]['label'] === 50000
                 && $request['samples'][0]['identifier'] === strval($existingModel->id);
         });

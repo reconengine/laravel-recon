@@ -29,9 +29,17 @@ class LaravelMl
                 try {
                     $traits = class_uses($modelClass);
 
-                    if (in_array(MlModel::class, $traits)) {
-                        $foundClasses->push($modelClass);
+                    if (! in_array(MlModel::class, $traits)) {
+                        continue;
                     }
+
+                    $reflectedClass = new \ReflectionClass($modelClass);
+
+                    if ($reflectedClass->isAbstract()) {
+                        continue;
+                    }
+
+                    $foundClasses->push($modelClass);
                 } catch (\ErrorException $errorException) {
                     // often times, a file is detected, but isn't a model.
                 }

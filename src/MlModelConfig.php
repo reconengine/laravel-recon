@@ -45,13 +45,21 @@ class MlModelConfig
     protected $datatype;
     protected $id;
 
+    /**
+     * MlModelConfig constructor.
+     * @param $model
+     */
     public function __construct()
     {
     }
 
+    /**
+     * @param $model
+     * @return static
+     */
     public static function make()
     {
-        return new static;
+        return new static();
     }
 
     /**
@@ -137,19 +145,20 @@ class MlModelConfig
     /**
      * @throws DatatypeMismatchException
      */
-    public function validate()
+    public function validateConfig()
     {
         // TODO: use Laravel validation to assert these are all set correctly.
-        if (! $this->type) {
+        if (null === $this->type) {
             throw new MlConfigValidationException("'type' is required");
         }
-        if (! $this->datatype) {
+        if (null === $this->datatype) {
             throw new MlConfigValidationException("'datatype' is required");
         }
-        if (! $this->id) {
-            throw new MlConfigValidationException("'id' is required");
-        }
-        if (! $this->name) {
+//        ID not required for the model
+//        if ($isIdRequired && null === $this->id) {
+//            throw new MlConfigValidationException("'id' is required");
+//        }
+        if (null === $this->name) {
             throw new MlConfigValidationException("'name' is required");
         }
 
@@ -159,5 +168,81 @@ class MlModelConfig
             $supportedString = collect($supportedTypes)->join(', ');
             throw new DatatypeMismatchException("Datatype is currently not supported for model type: {$this->type}. Supported: {$supportedString}");
         }
+    }
+
+
+    /**
+     * @throws DatatypeMismatchException
+     */
+    public function validateItem()
+    {
+        $this->validateConfig();
+
+        if (null === $this->id) {
+            throw new MlConfigValidationException("'id' is required");
+        }
+    }
+
+    /**
+     * @param MlModel $model
+     * @throws DatatypeMismatchException
+     */
+    public function validateData($model)
+    {
+        $this->validateLabel($model->label());
+        $this->validateFeatures($model->features());
+    }
+
+    /**
+     * @param $label
+     * @throws DatatypeMismatchException
+     */
+    public function validateLabel($label)
+    {
+        if ($this->type !== MlModelConfig::TYPE_ANOMALY) {
+            $detectedDatatypes = $this->detectDatatypes([$label]);
+            if ([$this->type] !== $detectedDatatypes) {
+                $errorString = collect($detectedDatatypes)->join(', ');
+                throw new DatatypeMismatchException("Model type mismatch. Allowed: {$this->type}. Found: {$errorString}");
+            }
+        }
+    }
+
+    /**
+     * @param array $features
+     * @throws DatatypeMismatchException
+     */
+    public function validateFeatures(array $features)
+    {
+        $detectedDatatypes = $this->detectDatatypes($features);
+        if ([$this->datatype] !== $detectedDatatypes) {
+            $errorString = collect($detectedDatatypes)->join(', ');
+            throw new DatatypeMismatchException("Model datatype mismatch. Allowed: {$this->datatype}. Found: {$errorString}");
+        }
+    }
+
+    /**
+     * @return array
+     */
+    protected function detectDatatypes(array $data)
+    {
+        $detectedDatatypes = [];
+
+        foreach ($data as $i => $value) {
+            switch (gettype($value)) {
+                case 'double':
+                case 'integer':
+                    array_push($detectedDatatypes, MlModelConfig::DATATYPE_CONTINUOUS);
+                    break;
+                case 'string':
+                    array_push($detectedDatatypes, MlModelConfig::DATATYPE_CATEGORICAL);
+                    break;
+                default:
+                    array_push($detectedDatatypes, 'other');
+                    break;
+            }
+        }
+
+        return array_unique($detectedDatatypes);
     }
 }

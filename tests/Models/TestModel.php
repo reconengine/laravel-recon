@@ -23,25 +23,25 @@ class TestModel extends Model
         'salary' => 'int',
     ];
 
-    protected function features(): array
+    public function features(): array
     {
         return [
-            $this->name,
             $this->age,
         ];
     }
 
-    protected function label()
+    public function label()
     {
         return $this->salary;
     }
 
-    public function ml(): MlModelConfig
+    protected function config(MlModelConfig $config)
     {
-        return MlModelConfig::make()
+        return $config
             ->setName('test_models')
             ->setId($this->id)
             ->setType(MlModelConfig::TYPE_CONTINUOUS)
+            ->setDatatype(MlModelConfig::DATATYPE_CONTINUOUS)
         ;
     }
 }

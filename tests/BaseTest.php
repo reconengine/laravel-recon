@@ -2,6 +2,7 @@
 
 namespace LaravelMl\Tests;
 
+use Illuminate\Support\Facades\Http;
 use Orchestra\Testbench\TestCase as Orchestra;
 use LaravelMl\LaravelMlFacade;
 use LaravelMl\LaravelMlServiceProvider;

@@ -37,8 +37,7 @@ class ModelPredictTest extends BaseTest
         Http::assertSent(function (Request $request) use ($testModel) {
             return Str::contains($request->url(), ['/api/models/' . $testModel->ml()->name() . '/predict'])
                 && $request->method() === 'POST'
-                && $request['samples'][0][0] === 'zach'
-                && $request['samples'][0][1] === 25;
+                && $request['samples'][0][0] === 25;
         });
     }
 }
