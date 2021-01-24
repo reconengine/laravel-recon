@@ -61,7 +61,7 @@ $prediction = $yourModel->predict();
 
 ## Configuration
 
-1. Machine learning model configuration is managed through the `MlModelConfig` object, via the `config()` method.
+Machine learning model configuration is managed through the `MlModelConfig` object, via the `config()` method.
 
 | Property      | Required | Notes |
 | ----------- | ----------- | ----- |

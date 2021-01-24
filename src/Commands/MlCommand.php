@@ -48,6 +48,13 @@ class MlCommand extends Command
      */
     public function handle()
     {
+        $existingApiKey = config('laravel-ml.token');
+
+        if (! $existingApiKey) {
+            $this->error('Missing API Key. Add ML_API_TOKEN={apiKey} to your .env file. You can get a key at https://laravelml.com');
+            return 1;
+        }
+
         $modelClasses = LaravelMlFacade::detectMlModels();
 
         if ($modelClasses->isEmpty()) {

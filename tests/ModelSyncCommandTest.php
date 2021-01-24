@@ -12,8 +12,18 @@ use LaravelMl\Tests\Models\TestModel;
 class ModelSyncCommandTest extends BaseTest
 {
     /** @test */
+    public function modelShowsAnErrorWhenNoApiKey()
+    {
+        $this->artisan('ml')
+            ->expectsOutput('Missing API Key. Add ML_API_TOKEN={apiKey} to your .env file. You can get a key at https://laravelml.com')
+            ->assertExitCode(1);
+    }
+
+    /** @test */
     public function modelFailsCalmlyWhenNoDetectedModelsExist()
     {
+        config([ 'laravel-ml.token' => 'abc']);
+
         LaravelMlFacade::shouldReceive('detectMlModels')->andReturn(collect());
 
         $this->artisan('ml')
@@ -24,6 +34,8 @@ class ModelSyncCommandTest extends BaseTest
     /** @test */
     public function modelMlCommandHandlesInvalidModel()
     {
+        config([ 'laravel-ml.token' => 'abc']);
+
         $this->artisan('ml')
             ->expectsQuestion('Which ML Model would you like to work with?', 'test')
             ->expectsOutput('Invalid choice. Please try again.')
@@ -33,6 +45,8 @@ class ModelSyncCommandTest extends BaseTest
     /** @test */
     public function modelMlCommandHandlesInvalidCommand()
     {
+        config([ 'laravel-ml.token' => 'abc']);
+
         $modelName = (new TestModel())->ml()->name();
 
         Http::fake([
@@ -50,6 +64,8 @@ class ModelSyncCommandTest extends BaseTest
     /** @test */
     public function modelCreateModel()
     {
+        config([ 'laravel-ml.token' => 'abc']);
+
         $modelName = (new TestModel())->ml()->name();
         $type = (new TestModel())->ml()->type();
 
@@ -81,6 +97,8 @@ class ModelSyncCommandTest extends BaseTest
     /** @test */
     public function modelSyncModel()
     {
+        config([ 'laravel-ml.token' => 'abc']);
+
         $modelName = (new TestModel())->ml()->name();
         $type = (new TestModel())->ml()->type();
 
@@ -116,6 +134,8 @@ class ModelSyncCommandTest extends BaseTest
     /** @test */
     public function modelDeleteModel()
     {
+        config([ 'laravel-ml.token' => 'abc']);
+
         $modelName = (new TestModel())->ml()->name();
 
         Http::fake([
