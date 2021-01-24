@@ -73,6 +73,7 @@ class MlCommand extends Command
         }
 
         $this->printModelInformation($modelClass);
+        $modelClass->ml()->validate();
         $action = $this->promptAction($choice);
 
         switch ($action) {
