@@ -21,12 +21,12 @@ class Api
     /// Models
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /**
-     * @param string $name
+     * @param MlModelConfig $config
      * @return mixed
      */
-    public function showModel(string $name)
+    public function showModel(MlModelConfig $config)
     {
-        return $this->http()->get(self::HOST . "/models/{$name}");
+        return $this->http()->get(self::HOST . "/models/{$config->name()}");
     }
 
     /**
@@ -34,30 +34,27 @@ class Api
      * @param array $data
      * @return mixed
      */
-    public function updateModel(string $name, array $data)
+    public function updateModel(MlModelConfig $config)
     {
-        return $this->http()->put(self::HOST . "/models/{$name}", $data);
+        return $this->http()->put(self::HOST . "/models/{$config->name()}", $config->toArray());
     }
 
     /**
-     * @param string $name
-     * @param array $data
+     * @param MlModelConfig $config
      * @return mixed
      */
-    public function storeModel(string $name, array $data)
+    public function storeModel(MlModelConfig $config)
     {
-        return $this->http()->post(self::HOST . "/models", [
-            'name' => $name,
-            ] + $data);
+        return $this->http()->post(self::HOST . "/models", $config->toArray());
     }
 
     /**
-     * @param string $name
+     * @param MlModelConfig $config
      * @return mixed
      */
-    public function deleteModel(string $name)
+    public function deleteModel(MlModelConfig $config)
     {
-        return $this->http()->delete(self::HOST . "/models/{$name}");
+        return $this->http()->delete(self::HOST . "/models/{$config->name()}");
     }
 
     /**
@@ -129,9 +126,9 @@ class Api
      * @param string $modelItemIdentifier
      * @return \Illuminate\Http\Client\Response
      */
-    public function deleteModelItem($modelName, $modelItemIdentifier)
+    public function deleteModelItem(MlModelConfig $config)
     {
-        return $this->http()->delete(self::HOST . "/models/{$modelName}/items/{$modelItemIdentifier}");
+        return $this->http()->delete(self::HOST . "/models/{$config->name()}/items/{$config->id()}");
     }
 
     /**

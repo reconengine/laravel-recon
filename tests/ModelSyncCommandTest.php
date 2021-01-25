@@ -68,6 +68,7 @@ class ModelSyncCommandTest extends BaseTest
 
         $modelName = (new TestModel())->ml()->name();
         $type = (new TestModel())->ml()->type();
+        $datatype = (new TestModel())->ml()->datatype();
 
         Http::fake([
             Api::HOST . '/models/' . $modelName => Http::response([], 404),
@@ -83,14 +84,15 @@ class ModelSyncCommandTest extends BaseTest
             ->expectsQuestion('Which ML Model would you like to work with?', $modelName)
             ->expectsOutput("Model does not exist yet.")
             ->expectsQuestion("Which action would you like to perform on {$modelName}?", 'Create')
-            ->expectsQuestion("Detected type: {$type}. Is this correct?", 'yes')
+            ->expectsQuestion("Detected type: {$type} ({$datatype}). Is this correct?", 'yes')
             ->assertExitCode(0);
 
-        Http::assertSent(function (Request $request) use ($modelName, $type) {
+        Http::assertSent(function (Request $request) use ($modelName, $type, $datatype) {
             return Str::contains($request->url(), ['/api/models'])
                 && $request->method() === 'POST'
                 && $request['name'] === $modelName
-                && $request['type'] === $type;
+                && $request['type'] === $type
+                && $request['datatype'] === $datatype;
         });
     }
 

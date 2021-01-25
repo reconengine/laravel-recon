@@ -143,6 +143,19 @@ class MlModelConfig
     }
 
     /**
+     * @return array
+     */
+    public function toArray()
+    {
+        return [
+            'type' => $this->type,
+            'datatype' => $this->datatype,
+            'name' => $this->name,
+            'identifier' => $this->id,
+        ];
+    }
+
+    /**
      * @throws DatatypeMismatchException
      */
     public function validateConfig()

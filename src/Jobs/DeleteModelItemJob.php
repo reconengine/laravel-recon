@@ -16,8 +16,7 @@ class DeleteModelItemJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $modelItemIdentifier;
-    public $modelName;
+    public $config;
 
     /**
      * Create a new job instance.
@@ -26,8 +25,7 @@ class DeleteModelItemJob implements ShouldQueue
      */
     public function __construct($modelItem)
     {
-        $this->modelItemIdentifier = $modelItem->ml()->id();
-        $this->modelName = $modelItem->ml()->name();
+        $this->config = $modelItem->ml();
     }
 
     /**
@@ -37,6 +35,6 @@ class DeleteModelItemJob implements ShouldQueue
      */
     public function handle()
     {
-        ApiFacade::deleteModelItem($this->modelName, $this->modelItemIdentifier);
+        ApiFacade::deleteModelItem($this->config);
     }
 }

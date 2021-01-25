@@ -98,7 +98,7 @@ class MlCommand extends Command
         /**
          * @var Response $remoteModelRecord
          */
-        $remoteModelRecord = ApiFacade::showModel($model->ml()->name());
+        $remoteModelRecord = ApiFacade::showModel($model->ml());
 
         if ($remoteModelRecord->status() === 404) {
             $this->warn('Model does not exist yet.');
@@ -133,6 +133,7 @@ class MlCommand extends Command
     protected function store($model)
     {
         $expectedModelType = $model->ml()->type();
+        $expectedDatatype = $model->ml()->datatype();
 
         if (! $expectedModelType) {
             $this->error('No model type set in the config.');
@@ -140,14 +141,18 @@ class MlCommand extends Command
             return 1;
         }
 
-        if (! $this->confirm("Detected type: {$expectedModelType}. Is this correct?")) {
+        if (! $expectedDatatype) {
+            $this->error('No datatype set in the config.');
+            $this->info('Please set a datatype in the config() method and try again.');
+            return 1;
+        }
+
+        if (! $this->confirm("Detected type: {$expectedModelType} ({$expectedDatatype}). Is this correct?")) {
             $this->info('Please update the model type in the config() method and try again.');
             return 1;
         }
 
-        $response = ApiFacade::storeModel($model->ml()->name(), [
-            'type' => $expectedModelType,
-        ]);
+        $response = ApiFacade::storeModel($model->ml());
 
         $response->throw(); // throw if not successful.
 
@@ -168,7 +173,7 @@ class MlCommand extends Command
     protected function delete($model)
     {
         if ($this->confirm('Are you sure you want to delete this model? This cannot be undone.')) {
-            $response = ApiFacade::deleteModel($model->ml()->name());
+            $response = ApiFacade::deleteModel($model->ml());
 
             $response->throw();
         }
