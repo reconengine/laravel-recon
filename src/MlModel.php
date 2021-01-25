@@ -33,7 +33,7 @@ trait MlModel
      * @return string unique model name
      */
     public function ml(): MlModelConfig {
-        $config = MlModelConfig::make($this);
+        $config = MlModelConfig::make();
 
         // TODO: gives move control
         $this->config($config);
@@ -41,6 +41,10 @@ trait MlModel
         if (null === $config->id()) {
             $config->setId($this->id);
         }
+
+        $config
+            ->setFeatures($this->features())
+            ->setLabel($this->label());
 
         return $config;
     }

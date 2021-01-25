@@ -50,21 +50,17 @@ class MlModelConfig
 
     /**
      * MlModelConfig constructor.
-     * @param MlModel $model
      */
-    public function __construct($model)
+    public function __construct()
     {
-        $this->features = $model->features();
-        $this->label = $model->label();
     }
 
     /**
-     * @param MlModel $model
      * @return static
      */
-    public static function make($model)
+    public static function make()
     {
-        return new static($model);
+        return new static;
     }
 
     /**
