@@ -33,7 +33,7 @@ trait MlModel
      * @return string unique model name
      */
     public function ml(): MlModelConfig {
-        $config = MlModelConfig::make();
+        $config = MlModelConfig::make($this);
 
         // TODO: gives move control
         $this->config($config);
@@ -64,22 +64,10 @@ trait MlModel
     }
 
     /**
-     * @return array
-     */
-    public function toMlJson()
-    {
-        return [
-            'features' => $this->features(),
-            'label' => $this->label(),
-            'identifier' => $this->ml()->id(),
-        ];
-    }
-
-    /**
      * @return array JSON response array
      */
     protected function predictRaw()
     {
-        return ApiFacade::predict($this);
+        return ApiFacade::predict($this->ml());
     }
 }

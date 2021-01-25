@@ -11,6 +11,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use LaravelMl\ApiFacade;
 use LaravelMl\LaravelMlFacade;
+use LaravelMl\MlModelConfig;
 
 class DeleteModelItemJob implements ShouldQueue
 {
@@ -23,9 +24,9 @@ class DeleteModelItemJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($modelItem)
+    public function __construct(MlModelConfig $config)
     {
-        $this->config = $modelItem->ml();
+        $this->config = $config;
     }
 
     /**

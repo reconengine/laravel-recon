@@ -65,13 +65,13 @@ class Api
     public function syncModel($model, callable $progress = null)
     {
         $modelName = $model->ml()->name();
-        $model::chunk(5000, function (Collection $modelItems) use ($modelName, $progress) {
+        $model::chunk(250, function (Collection $modelItems) use ($modelName, $progress) {
             $modelJson = $modelItems->map(function ($model) {
                 /**
                  * @var MlModel $model
                  */
                 if ($model->isTrainable()) {
-                    return $model->toMlJson();
+                    return $model->ml()->toMlJson();
                 }
 
                 return null;
@@ -98,27 +98,24 @@ class Api
      * @param $model
      * @return mixed
      */
-    public function createModelItem($model)
+    public function createModelItem(MlModelConfig $config)
     {
-        $model->ml()->validateItem();
-        $model->ml()->validateData($model);
-        $modelName = $model->ml()->name();
+        $config->validateItem();
+        $config->validateData();
 
-        return $this->http()->post(self::HOST . "/models/{$modelName}/items", $model->toMlJson());
+        return $this->http()->post(self::HOST . "/models/{$config->name()}/items", $config->toMlJson());
     }
 
     /**
      * @param MlModel $modelItem
      * @return mixed
      */
-    public function updateModelItem($modelItem)
+    public function updateModelItem(MlModelConfig $config)
     {
-        $modelItem->ml()->validateItem();
-        $modelItem->ml()->validateData($modelItem);
-        $modelName = $modelItem->ml()->name();
-        $modelItemIdentifier = $modelItem->ml()->id();
+        $config->validateItem();
+        $config->validateData();
 
-        return $this->http()->put(self::HOST . "/models/{$modelName}/items/{$modelItemIdentifier}", $modelItem->toMlJson());
+        return $this->http()->put(self::HOST . "/models/{$config->name()}/items/{$config->id()}", $config->toMlJson());
     }
 
     /**
@@ -137,15 +134,13 @@ class Api
      * @return array|mixed
      * @throws \Illuminate\Http\Client\RequestException
      */
-    public function predict($modelItem)
+    public function predict(MlModelConfig $config)
     {
-        $modelItem->ml()->validateItem();
-        $modelItem->ml()->validateData($modelItem);
+        $config->validateItem();
+        $config->validateData();
 
-        $modelName = $modelItem->ml()->name();
-
-        $response = $this->http()->post(self::HOST . "/models/{$modelName}/predict", [
-            'samples' => [$modelItem->features()],
+        $response = $this->http()->post(self::HOST . "/models/{$config->name()}/predict", [
+            'samples' => [$config->features()],
         ]);
 
         $response->throw();

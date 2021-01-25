@@ -16,7 +16,7 @@ class MlModelObserver
     public function created($modelItem)
     {
         if ($modelItem->isTrainable()) {
-            dispatch(new CreateModelItemJob($modelItem));
+            dispatch(new CreateModelItemJob($modelItem->ml()));
         }
     }
 
@@ -26,7 +26,7 @@ class MlModelObserver
     public function updated($modelItem)
     {
         if ($modelItem->isTrainable()) {
-            dispatch(new UpdateModelItemJob($modelItem));
+            dispatch(new UpdateModelItemJob($modelItem->ml()));
         }
     }
 
@@ -36,7 +36,7 @@ class MlModelObserver
     public function deleted($modelItem)
     {
         if ($modelItem->isTrainable()) {
-            dispatch(new DeleteModelItemJob($modelItem));
+            dispatch(new DeleteModelItemJob($modelItem->ml()));
         }
     }
 }

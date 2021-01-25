@@ -45,21 +45,26 @@ class MlModelConfig
     protected $datatype;
     protected $id;
 
+    protected $features;
+    protected $label;
+
     /**
      * MlModelConfig constructor.
-     * @param $model
+     * @param MlModel $model
      */
-    public function __construct()
+    public function __construct($model)
     {
+        $this->features = $model->features();
+        $this->label = $model->label();
     }
 
     /**
-     * @param $model
+     * @param MlModel $model
      * @return static
      */
-    public static function make()
+    public static function make($model)
     {
-        return new static();
+        return new static($model);
     }
 
     /**
@@ -142,6 +147,43 @@ class MlModelConfig
         return $this->id;
     }
 
+
+    /**
+     * @param mixed $features
+     * @return MlModelConfig
+     */
+    public function setFeatures($features)
+    {
+        $this->features = $features;
+        return $this;
+    }
+
+    /**
+     * @param mixed $label
+     * @return MlModelConfig
+     */
+    public function setLabel($label)
+    {
+        $this->label = $label;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function features()
+    {
+        return $this->features;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function label()
+    {
+        return $this->label;
+    }
+
     /**
      * @return array
      */
@@ -152,6 +194,18 @@ class MlModelConfig
             'datatype' => $this->datatype,
             'name' => $this->name,
             'identifier' => $this->id,
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function toMlJson()
+    {
+        return [
+            'features' => $this->features(),
+            'label' => $this->label(),
+            'identifier' => $this->id(),
         ];
     }
 
@@ -200,10 +254,10 @@ class MlModelConfig
      * @param MlModel $model
      * @throws DatatypeMismatchException
      */
-    public function validateData($model)
+    public function validateData()
     {
-        $this->validateLabel($model->label());
-        $this->validateFeatures($model->features());
+        $this->validateLabel($this->label());
+        $this->validateFeatures($this->features());
     }
 
     /**

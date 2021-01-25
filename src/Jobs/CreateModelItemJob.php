@@ -11,21 +11,22 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use LaravelMl\ApiFacade;
 use LaravelMl\LaravelMlFacade;
+use LaravelMl\MlModelConfig;
 
 class CreateModelItemJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $modelItem;
+    public $config;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($modelItem)
+    public function __construct(MlModelConfig $config)
     {
-        $this->modelItem = $modelItem;
+        $this->config = $config;
     }
 
     /**
@@ -35,6 +36,6 @@ class CreateModelItemJob implements ShouldQueue
      */
     public function handle()
     {
-        ApiFacade::createModelItem($this->modelItem);
+        ApiFacade::createModelItem($this->config);
     }
 }
