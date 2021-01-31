@@ -10,10 +10,9 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use LaravelMl\ApiFacade;
-use LaravelMl\LaravelMlFacade;
-use LaravelMl\MlModelConfig;
+use LaravelMl\LmlRecordConfig;
 
-class CreateModelItemJob implements ShouldQueue
+class UpdateRecordJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -24,7 +23,7 @@ class CreateModelItemJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(MlModelConfig $config)
+    public function __construct(LmlRecordConfig $config)
     {
         $this->config = $config;
     }
@@ -36,6 +35,6 @@ class CreateModelItemJob implements ShouldQueue
      */
     public function handle()
     {
-        ApiFacade::createModelItem($this->config);
+        ApiFacade::updateRecord($this->config);
     }
 }

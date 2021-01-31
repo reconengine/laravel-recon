@@ -21,40 +21,39 @@ class Api
     /// Models
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /**
-     * @param MlModelConfig $config
+     * @param LmlDatabaseConfig $config
      * @return mixed
      */
-    public function showModel(MlModelConfig $config)
+    public function showDatabase(LmlDatabaseConfig $config)
     {
-        return $this->http()->get(self::HOST . "/models/{$config->name()}");
+        return $this->http()->get(self::HOST . "/databases/{$config->name()}");
     }
 
     /**
-     * @param string $name
-     * @param array $data
+     * @param LmlDatabaseConfig $config
      * @return mixed
      */
-    public function updateModel(MlModelConfig $config)
+    public function updateDatabase(LmlDatabaseConfig $config)
     {
-        return $this->http()->put(self::HOST . "/models/{$config->name()}", $config->toArray());
+        return $this->http()->put(self::HOST . "/databases/{$config->name()}", $config->toJson());
     }
 
     /**
-     * @param MlModelConfig $config
+     * @param LmlDatabaseConfig $config
      * @return mixed
      */
-    public function storeModel(MlModelConfig $config)
+    public function storeDatabase(LmlDatabaseConfig $config)
     {
-        return $this->http()->post(self::HOST . "/models", $config->toArray());
+        return $this->http()->post(self::HOST . "/databases", $config->toJson());
     }
 
     /**
-     * @param MlModelConfig $config
+     * @param LmlDatabaseConfig $config
      * @return mixed
      */
-    public function deleteModel(MlModelConfig $config)
+    public function deleteDatabase(LmlDatabaseConfig $config)
     {
-        return $this->http()->delete(self::HOST . "/models/{$config->name()}");
+        return $this->http()->delete(self::HOST . "/databases/{$config->name()}");
     }
 
     /**
@@ -62,29 +61,29 @@ class Api
      * @param callable|null $progress
      * @return bool
      */
-    public function syncModel($model, callable $progress = null)
+    public function syncDatabase($model, callable $progress = null)
     {
-        $modelName = $model->ml()->name();
-        $model::chunk(250, function (Collection $modelItems) use ($modelName, $progress) {
-            $modelJson = $modelItems->map(function ($model) {
+        $databaseName = $model->ml()->database()->name();
+        $model::chunk(250, function (Collection $records) use ($databaseName, $progress) {
+            $samples = $records->map(function ($record) {
                 /**
-                 * @var MlModel $model
+                 * @var LmlRecord $record
                  */
-                if ($model->isTrainable()) {
-                    return $model->ml()->toMlJson();
+                if ($record->isTrainable()) {
+                    return $record->ml()->toJson();
                 }
 
                 return null;
             })->filter();
 
-            $response = $this->http()->post(self::HOST . "/models/{$modelName}/train", [
-                'samples' => $modelJson->toArray(),
+            $response = $this->http()->post(self::HOST . "/databases/{$databaseName}/train", [
+                'samples' => $samples->toArray(),
             ]);
 
             $response->throw();
 
             if ($progress) {
-                $progress($modelItems);
+                $progress($records);
             }
         });
 
@@ -92,54 +91,52 @@ class Api
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// Model Items
+    /// Records
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /**
-     * @param $model
+     * @param LmlRecordConfig $config
      * @return mixed
+     * @throws Exceptions\DatatypeMismatchException
      */
-    public function createModelItem(MlModelConfig $config)
+    public function createRecord(LmlRecordConfig $config)
     {
-        $config->validateItem();
-        $config->validateData();
+        $config->validate();
 
-        return $this->http()->post(self::HOST . "/models/{$config->name()}/items", $config->toMlJson());
+        return $this->http()->post(self::HOST . "/databases/{$config->database()->name()}/records", $config->toJson());
     }
 
     /**
-     * @param MlModel $modelItem
+     * @param LmlRecordConfig $config
      * @return mixed
+     * @throws Exceptions\DatatypeMismatchException
      */
-    public function updateModelItem(MlModelConfig $config)
+    public function updateRecord(LmlRecordConfig $config)
     {
-        $config->validateItem();
-        $config->validateData();
+        $config->validate();
 
-        return $this->http()->put(self::HOST . "/models/{$config->name()}/items/{$config->id()}", $config->toMlJson());
+        return $this->http()->put(self::HOST . "/databases/{$config->database()->name()}/records/{$config->networkId()}", $config->toJson());
     }
 
     /**
-     * @param string $modelName
-     * @param string $modelItemIdentifier
+     * @param LmlRecordConfig $config
      * @return \Illuminate\Http\Client\Response
      */
-    public function deleteModelItem(MlModelConfig $config)
+    public function deleteRecord(LmlRecordConfig $config)
     {
-        return $this->http()->delete(self::HOST . "/models/{$config->name()}/items/{$config->id()}");
+        return $this->http()->delete(self::HOST . "/databases/{$config->database()->name()}/records/{$config->networkId()}");
     }
 
     /**
-     * @param MlModel $modelItem
-     * @param array $samples
+     * @param LmlRecordConfig $config
      * @return array|mixed
+     * @throws Exceptions\DatatypeMismatchException
      * @throws \Illuminate\Http\Client\RequestException
      */
-    public function predict(MlModelConfig $config)
+    public function predict(LmlRecordConfig $config)
     {
-        $config->validateItem();
-        $config->validateData();
+        $config->validate();
 
-        $response = $this->http()->post(self::HOST . "/models/{$config->name()}/predict", [
+        $response = $this->http()->post(self::HOST . "/databases/{$config->database()->name()}/predict", [
             'samples' => [$config->features()],
         ]);
 

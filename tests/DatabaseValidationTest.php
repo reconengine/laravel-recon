@@ -3,10 +3,11 @@
 namespace LaravelMl\Tests;
 
 use LaravelMl\Exceptions\DatatypeMismatchException;
-use LaravelMl\MlModelConfig;
+use LaravelMl\LmlDatabaseConfig;
+use LaravelMl\LmlRecordConfig;
 use LaravelMl\Tests\Models\MockMlTestModel;
 
-class ModelValidationTest extends BaseTest
+class DatabaseValidationTest extends BaseTest
 {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /// Features
@@ -14,14 +15,23 @@ class ModelValidationTest extends BaseTest
     /** @test */
     public function featuresMustMatchDatatype()
     {
+        config([
+            'laravel-ml' => [
+                'databases' => [
+                    LmlDatabaseConfig::make()
+                        ->setName('test_models')
+                        ->setType(LmlDatabaseConfig::TYPE_CONTINUOUS)
+                        ->setDatatype(LmlDatabaseConfig::DATATYPE_CONTINUOUS)
+                ]
+            ],
+        ]);
+
         $testModel = new class extends MockMlTestModel {
             public function features(): array{return [45.0, 90.0, 100.0];}
             public function label(){return 45;}
-            protected function config(MlModelConfig $config)
+            protected function config(LmlRecordConfig $config)
             {
-                $config->setType(MlModelConfig::TYPE_CONTINUOUS)
-                    ->setDatatype(MlModelConfig::DATATYPE_CONTINUOUS)
-                ;
+                $config->setDatabase('test_models');
             }
         };
 
@@ -44,14 +54,24 @@ class ModelValidationTest extends BaseTest
     /** @test */
     public function labelMustMatchDatatype()
     {
+        config([
+            'laravel-ml' => [
+                'databases' => [
+                    LmlDatabaseConfig::make()
+                        ->setName('test_models')
+                        ->setType(LmlDatabaseConfig::TYPE_CONTINUOUS)
+                        ->setDatatype(LmlDatabaseConfig::DATATYPE_CONTINUOUS)
+                ]
+            ],
+        ]);
+
+
         $testModel = new class extends MockMlTestModel {
             public function features(): array{return [45.0, 90.0, 100.0];}
             public function label(){return 45;}
-            protected function config(MlModelConfig $config)
+            protected function config(LmlRecordConfig $config)
             {
-                $config->setType(MlModelConfig::TYPE_CONTINUOUS)
-                    ->setDatatype(MlModelConfig::DATATYPE_CONTINUOUS)
-                ;
+                $config->setDatabase('test_models');
             }
         };
 
@@ -66,14 +86,23 @@ class ModelValidationTest extends BaseTest
     /** @test */
     public function labelRequired()
     {
+        config([
+            'laravel-ml' => [
+                'databases' => [
+                    LmlDatabaseConfig::make()
+                        ->setName('test_models')
+                        ->setType(LmlDatabaseConfig::TYPE_CONTINUOUS)
+                        ->setDatatype(LmlDatabaseConfig::DATATYPE_CONTINUOUS)
+                ]
+            ],
+        ]);
+
         $testModel = new class extends MockMlTestModel {
             public function features(): array{return [45.0, 90.0, 100.0];}
             public function label(){return 45;}
-            protected function config(MlModelConfig $config)
+            protected function config(LmlRecordConfig $config)
             {
-                $config->setType(MlModelConfig::TYPE_CONTINUOUS)
-                    ->setDatatype(MlModelConfig::DATATYPE_CONTINUOUS)
-                ;
+                $config->setDatabase('test_models');
             }
         };
 
@@ -88,14 +117,23 @@ class ModelValidationTest extends BaseTest
     /** @test */
     public function labelNotRequiredForAnomaly()
     {
+        config([
+            'laravel-ml' => [
+                'databases' => [
+                    LmlDatabaseConfig::make()
+                        ->setName('test_models')
+                        ->setType(LmlDatabaseConfig::TYPE_ANOMALY)
+                        ->setDatatype(LmlDatabaseConfig::DATATYPE_CONTINUOUS)
+                ]
+            ],
+        ]);
+
         $testModel = new class extends MockMlTestModel {
             public function features(): array{return [45.0, 90.0, 100.0];}
             public function label(){return 45;}
-            protected function config(MlModelConfig $config)
+            protected function config(LmlRecordConfig $config)
             {
-                $config->setType(MlModelConfig::TYPE_ANOMALY)
-                    ->setDatatype(MlModelConfig::DATATYPE_CONTINUOUS)
-                ;
+                $config->setDatabase('test_models');
             }
         };
 
@@ -106,46 +144,5 @@ class ModelValidationTest extends BaseTest
 
         // no exception thrown ^
         $this->assertTrue(true);
-    }
-
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// Config
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    /** @test */
-    public function configDefaultsToModelId()
-    {
-        $testModel = new class extends MockMlTestModel {
-            public $id = '::id::';
-            public function features(): array{return [45.0, 90.0, 100.0];}
-            public function label(){return 45;}
-            protected function config(MlModelConfig $config)
-            {
-                $config->setType(MlModelConfig::TYPE_CONTINUOUS)
-                    ->setDatatype(MlModelConfig::DATATYPE_CONTINUOUS)
-                ;
-            }
-        };
-
-        $this->assertEquals('::id::', $testModel->ml()->id());
-    }
-
-    /** @test */
-    public function configModelIdIsUsedWhenSet()
-    {
-        $testModel = new class extends MockMlTestModel {
-            public $id = '::id::';
-            public function features(): array{return [45.0, 90.0, 100.0];}
-            public function label(){return 45;}
-            protected function config(MlModelConfig $config)
-            {
-                $config->setType(MlModelConfig::TYPE_CONTINUOUS)
-                    ->setDatatype(MlModelConfig::DATATYPE_CONTINUOUS)
-                    ->setId($this->id . 'custom')
-                ;
-            }
-        };
-
-        $this->assertEquals('::id::custom', $testModel->ml()->id());
     }
 }

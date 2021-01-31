@@ -4,7 +4,7 @@ namespace LaravelMl\Exceptions;
 
 use Exception;
 
-class MlConfigValidationException extends Exception
+class LmlConfigValidationException extends Exception
 {
     //
 }

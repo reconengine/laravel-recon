@@ -5,12 +5,13 @@ namespace LaravelMl\Tests\Models;
 
 
 use Illuminate\Database\Eloquent\Model;
-use LaravelMl\MlModel;
-use LaravelMl\MlModelConfig;
+use LaravelMl\LmlRecord;
+use LaravelMl\LmlDatabaseConfig;
+use LaravelMl\LmlRecordConfig;
 
 class TestModel extends Model
 {
-    use MlModel;
+    use LmlRecord;
 
     public $isTrainable = true;
 
@@ -37,13 +38,10 @@ class TestModel extends Model
         return $this->salary;
     }
 
-    protected function config(MlModelConfig $config)
+    protected function config(LmlRecordConfig $config)
     {
         return $config
-            ->setName('test_models')
-            ->setId($this->id)
-            ->setType(MlModelConfig::TYPE_CONTINUOUS)
-            ->setDatatype(MlModelConfig::DATATYPE_CONTINUOUS)
+            ->setDatabase('test_models')
         ;
     }
 

@@ -27,9 +27,9 @@ class MlCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Syncronize your model settings with Laravel.ai';
+    protected $description = 'Syncronize your database and record settings with laravelml.com';
 
-    protected $selectedModelNetworkResponse = null;
+    protected $selectedDatabaseNetworkResponse = null;
 
     /**
      * Create a new command instance.
@@ -55,20 +55,20 @@ class MlCommand extends Command
             return 1;
         }
 
-        $modelClasses = LaravelMlFacade::detectMlModels();
+        $modelClasses = LaravelMlFacade::detectDatabases();
 
         if ($modelClasses->isEmpty()) {
-            $this->error('No Laravel ML models detected. Did you set it up correctly?');
+            $this->error('No Laravel ML databases detected. Did you set it up correctly?');
             return 1;
         }
 
         $modelClasses = collect($modelClasses)->mapWithKeys(function (string $modelClass) {
             $model = new $modelClass;
-            return [$model->ml()->name() => $model];
+            return [$model->ml()->database()->name() => $model];
         });
 
         $choice = $this->choice(
-            'Which ML Model would you like to work with?',
+            'Which ML Record Definition would you like to work with?',
             $modelClasses->keys()->toArray()
         );
 
@@ -80,7 +80,7 @@ class MlCommand extends Command
         }
 
         $this->printModelInformation($modelClass);
-        $modelClass->ml()->validateConfig();
+        $modelClass->ml()->database()->validate();
         $action = $this->promptAction($choice);
 
         switch ($action) {
@@ -98,10 +98,10 @@ class MlCommand extends Command
         /**
          * @var Response $remoteModelRecord
          */
-        $remoteModelRecord = ApiFacade::showModel($model->ml());
+        $remoteModelRecord = ApiFacade::showDatabase($model->ml()->database());
 
         if ($remoteModelRecord->status() === 404) {
-            $this->warn('Model does not exist yet.');
+            $this->warn('Database does not exist yet.');
             return;
         } elseif ($remoteModelRecord->status() !== 200) {
             $remoteModelRecord->throw();
@@ -110,14 +110,14 @@ class MlCommand extends Command
         $modelName = $remoteModelRecord['data']['name'];
         $modelType = $remoteModelRecord['data']['type'];
 
-        $this->selectedModelNetworkResponse = $remoteModelRecord;
-        $this->line("Model: {$modelName}");
-        $this->line("Type:  {$modelType}");
+        $this->selectedDatabaseNetworkResponse = $remoteModelRecord;
+        $this->line("Database:  {$modelName}");
+        $this->line("Type:      {$modelType}");
     }
 
     protected function promptAction($choice)
     {
-        $actions = $this->selectedModelNetworkResponse === null ? [
+        $actions = $this->selectedDatabaseNetworkResponse === null ? [
             'Create',
         ] : [
             'Sync',
@@ -132,8 +132,8 @@ class MlCommand extends Command
 
     protected function store($model)
     {
-        $expectedModelType = $model->ml()->type();
-        $expectedDatatype = $model->ml()->datatype();
+        $expectedModelType = $model->ml()->database()->type();
+        $expectedDatatype = $model->ml()->database()->datatype();
 
         if (! $expectedModelType) {
             $this->error('No model type set in the config.');
@@ -152,7 +152,7 @@ class MlCommand extends Command
             return 1;
         }
 
-        $response = ApiFacade::storeModel($model->ml());
+        $response = ApiFacade::storeDatabase($model->ml()->database());
 
         $response->throw(); // throw if not successful.
 
@@ -161,7 +161,7 @@ class MlCommand extends Command
 
     protected function sync($model)
     {
-        ApiFacade::syncModel($model, function (Collection $models) {
+        ApiFacade::syncDatabase($model, function (Collection $models) {
             $firstId = $models->first()->id;
             $lastId = $models->last()->id;
             $this->info("Imported records {$firstId}-{$lastId}");
@@ -172,8 +172,8 @@ class MlCommand extends Command
 
     protected function delete($model)
     {
-        if ($this->confirm('Are you sure you want to delete this model? This cannot be undone.')) {
-            $response = ApiFacade::deleteModel($model->ml());
+        if ($this->confirm('Are you sure you want to delete this database? This cannot be undone.')) {
+            $response = ApiFacade::deleteDatabase($model->ml()->database());
 
             $response->throw();
         }

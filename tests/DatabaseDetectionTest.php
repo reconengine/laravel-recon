@@ -7,12 +7,12 @@ use LaravelMl\LaravelMlFacade;
 use LaravelMl\LaravelMlServiceProvider;
 use LaravelMl\Tests\Models\TestModel;
 
-class ModelDetectionTest extends BaseTest
+class DatabaseDetectionTest extends BaseTest
 {
     /** @test */
     public function autoDetectModels()
     {
-        $classes = LaravelMlFacade::detectMlModels();
+        $classes = LaravelMlFacade::detectDatabases();
 
         $this->assertEquals([
             TestModel::class,

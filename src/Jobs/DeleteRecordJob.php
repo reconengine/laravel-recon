@@ -10,10 +10,9 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use LaravelMl\ApiFacade;
-use LaravelMl\LaravelMlFacade;
-use LaravelMl\MlModelConfig;
+use LaravelMl\LmlRecordConfig;
 
-class DeleteModelItemJob implements ShouldQueue
+class DeleteRecordJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -24,7 +23,7 @@ class DeleteModelItemJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(MlModelConfig $config)
+    public function __construct(LmlRecordConfig $config)
     {
         $this->config = $config;
     }
@@ -36,6 +35,6 @@ class DeleteModelItemJob implements ShouldQueue
      */
     public function handle()
     {
-        ApiFacade::deleteModelItem($this->config);
+        ApiFacade::deleteRecord($this->config);
     }
 }

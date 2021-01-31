@@ -4,16 +4,13 @@ namespace LaravelMl\Jobs;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use LaravelMl\ApiFacade;
-use LaravelMl\LaravelMlFacade;
-use LaravelMl\MlModelConfig;
+use LaravelMl\LmlRecordConfig;
 
-class UpdateModelItemJob implements ShouldQueue
+class CreateRecordJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -24,7 +21,7 @@ class UpdateModelItemJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(MlModelConfig $config)
+    public function __construct(LmlRecordConfig $config)
     {
         $this->config = $config;
     }
@@ -36,6 +33,6 @@ class UpdateModelItemJob implements ShouldQueue
      */
     public function handle()
     {
-        ApiFacade::updateModelItem($this->config);
+        ApiFacade::createRecord($this->config);
     }
 }

@@ -4,14 +4,14 @@
 namespace LaravelMl;
 
 
-trait MlModel
+trait LmlRecord
 {
     /**
      * Hook
      */
-    public static function bootMlModel(): void
+    public static function bootLmlRecord(): void
     {
-        static::observe(app(MlModelObserver::class));
+        static::observe(app(LmlRecordObserver::class));
     }
 
     /**
@@ -24,27 +24,15 @@ trait MlModel
      */
     abstract public function label();
 
-    /**
-     * @return string unique model name
-     */
-    abstract protected function config(MlModelConfig $config);
+    abstract protected function config(LmlRecordConfig $config);
 
     /**
      * @return string unique model name
      */
-    public function ml(): MlModelConfig {
-        $config = MlModelConfig::make();
+    public function ml(): LmlRecordConfig {
+        $config = LmlRecordConfig::make($this);
 
-        // TODO: gives move control
         $this->config($config);
-
-        if (null === $config->id()) {
-            $config->setId($this->id);
-        }
-
-        $config
-            ->setFeatures($this->features())
-            ->setLabel($this->label());
 
         return $config;
     }

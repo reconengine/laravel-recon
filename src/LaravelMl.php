@@ -15,10 +15,10 @@ class LaravelMl
      * @return \Illuminate\Support\Collection
      * @throws \ReflectionException
      */
-    public function detectMlModels()
+    public function detectDatabases()
     {
-        $path = $this->detectModelPath();
-        $namespace = $this->detectModelNamespace();
+        $path = $this->detectDatabasePath();
+        $namespace = $this->detectDatabaseNamespace();
 
         $files = File::allFiles($path);
         $foundClasses = collect();
@@ -29,7 +29,7 @@ class LaravelMl
                 try {
                     $traits = class_uses($modelClass);
 
-                    if (! in_array(MlModel::class, $traits)) {
+                    if (! in_array(LmlRecord::class, $traits)) {
                         continue;
                     }
 
@@ -53,7 +53,7 @@ class LaravelMl
      * @return string
      * @throws \Exception
      */
-    protected function detectModelPath()
+    protected function detectDatabasePath()
     {
         $path = app_path('Models');
         if (! File::isDirectory($path)) {
@@ -71,7 +71,7 @@ class LaravelMl
      * @return string
      * @throws \Exception
      */
-    protected function detectModelNamespace()
+    protected function detectDatabaseNamespace()
     {
         if (File::isDirectory(app_path('Models'))) {
             return 'App\\Models';

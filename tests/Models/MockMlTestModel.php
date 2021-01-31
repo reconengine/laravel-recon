@@ -5,12 +5,12 @@ namespace LaravelMl\Tests\Models;
 
 
 use Illuminate\Database\Eloquent\Model;
-use LaravelMl\MlModel;
-use LaravelMl\MlModelConfig;
+use LaravelMl\LmlRecord;
+use LaravelMl\LmlDatabaseConfig;
 
 abstract class MockMlTestModel
 {
-    use MlModel;
+    use LmlRecord;
 
-    public $id = null;
+    public $id = 1;
 }
