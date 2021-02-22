@@ -29,7 +29,7 @@ class LaravelMl
                 try {
                     $traits = class_uses($modelClass);
 
-                    if (! in_array(LmlRecord::class, $traits)) {
+                    if (! in_array(LmlItem::class, $traits)) {
                         continue;
                     }
 

@@ -3,8 +3,10 @@
 namespace LaravelMl;
 
 use Illuminate\Support\ServiceProvider;
+use Laravel\Observers\LmlItemObserver;
 use LaravelMl\Api\Api;
 use LaravelMl\Commands\MlCommand;
+use LaravelMl\Observers\LmlUserObserver;
 
 class LaravelMlServiceProvider extends ServiceProvider
 {

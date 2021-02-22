@@ -6,26 +6,27 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use LaravelMl\Api\ApiFacade;
 use LaravelMl\LmlRecordConfig;
 
-class UpdateRecordJob implements ShouldQueue
+class UpdateUserJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $config;
+    public $user;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(LmlRecordConfig $config)
+    public function __construct(Model $user)
     {
-        $this->config = $config;
+        $this->user = $user;
     }
 
     /**
@@ -35,6 +36,6 @@ class UpdateRecordJob implements ShouldQueue
      */
     public function handle()
     {
-        ApiFacade::updateRecord($this->config);
+        ApiFacade::putUser($this->user);
     }
 }

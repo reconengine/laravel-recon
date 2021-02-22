@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Http;
 use Orchestra\Testbench\TestCase as Orchestra;
 use LaravelMl\LaravelMlFacade;
 use LaravelMl\LaravelMlServiceProvider;
-use LaravelMl\Tests\Models\TestModel;
+use LaravelMl\Tests\Models\TestModelItem;
 
 class BaseTest extends Orchestra
 {

@@ -4,28 +4,26 @@ namespace LaravelMl\Jobs;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use LaravelMl\Api\ApiFacade;
-use LaravelMl\LmlRecordConfig;
 
-class DeleteRecordJob implements ShouldQueue
+class CreateItemJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $config;
+    public $item;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(LmlRecordConfig $config)
+    public function __construct(Model $item)
     {
-        $this->config = $config;
+        $this->item = $item;
     }
 
     /**
@@ -35,6 +33,6 @@ class DeleteRecordJob implements ShouldQueue
      */
     public function handle()
     {
-        ApiFacade::deleteRecord($this->config);
+        ApiFacade::putItem($this->item);
     }
 }

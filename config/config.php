@@ -8,6 +8,11 @@ return [
 
     'database' => env('ML_DEFAULT_DATABASE'),
 
+//    'sandbox' => false,
+//
+//    'user_definition' =>
+//
+//
 //    'databases' => [
 //        \LaravelMl\LmlDatabaseConfig::make()
 //            ->setName('yourDatabase')

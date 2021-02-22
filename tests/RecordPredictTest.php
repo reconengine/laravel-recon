@@ -9,7 +9,7 @@ use LaravelMl\LmlDatabaseConfig;
 use Orchestra\Testbench\TestCase;
 use LaravelMl\LaravelMlFacade;
 use LaravelMl\LaravelMlServiceProvider;
-use LaravelMl\Tests\Models\TestModel;
+use LaravelMl\Tests\Models\TestModelItem;
 
 class RecordPredictTest extends BaseTest
 {
@@ -41,7 +41,7 @@ class RecordPredictTest extends BaseTest
             ], 200),
         ]);
 
-        $testModel = TestModel::create([
+        $testModel = TestModelItem::create([
             'name' => 'zach',
             'age' => 25,
             'salary' => 50000,

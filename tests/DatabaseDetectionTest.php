@@ -5,7 +5,7 @@ namespace LaravelMl\Tests;
 use Orchestra\Testbench\TestCase;
 use LaravelMl\LaravelMlFacade;
 use LaravelMl\LaravelMlServiceProvider;
-use LaravelMl\Tests\Models\TestModel;
+use LaravelMl\Tests\Models\TestModelItem;
 
 class DatabaseDetectionTest extends BaseTest
 {
@@ -15,7 +15,7 @@ class DatabaseDetectionTest extends BaseTest
         $classes = LaravelMlFacade::detectDatabases();
 
         $this->assertEquals([
-            TestModel::class,
+            TestModelItem::class,
         ], $classes->toArray());
     }
 }

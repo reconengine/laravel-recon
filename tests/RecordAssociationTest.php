@@ -9,7 +9,7 @@ use LaravelMl\LmlDatabaseConfig;
 use Orchestra\Testbench\TestCase;
 use LaravelMl\LaravelMlFacade;
 use LaravelMl\LaravelMlServiceProvider;
-use LaravelMl\Tests\Models\TestModel;
+use LaravelMl\Tests\Models\TestModelItem;
 
 class RecordAssociationTest extends BaseTest
 {
@@ -38,12 +38,12 @@ class RecordAssociationTest extends BaseTest
             ], 200),
         ]);
 
-        $testModel1 = TestModel::create([
+        $testModel1 = TestModelItem::create([
             'name' => 'zach',
             'age' => 25,
             'salary' => 50000,
         ]);
-        $testModel2 = TestModel::create([
+        $testModel2 = TestModelItem::create([
             'name' => 'zach',
             'age' => 25,
             'salary' => 50000,

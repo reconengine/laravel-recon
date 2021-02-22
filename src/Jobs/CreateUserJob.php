@@ -4,26 +4,26 @@ namespace LaravelMl\Jobs;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use LaravelMl\Api\ApiFacade;
-use LaravelMl\LmlRecordConfig;
 
-class CreateRecordJob implements ShouldQueue
+class CreateUserJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $config;
+    public $user;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(LmlRecordConfig $config)
+    public function __construct(Model $user)
     {
-        $this->config = $config;
+        $this->user = $user;
     }
 
     /**
@@ -33,6 +33,6 @@ class CreateRecordJob implements ShouldQueue
      */
     public function handle()
     {
-        ApiFacade::createRecord($this->config);
+        ApiFacade::putUser($this->user);
     }
 }

@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 use LaravelMl\Api;
 use LaravelMl\LaravelMlFacade;
 use LaravelMl\LmlDatabaseConfig;
-use LaravelMl\Tests\Models\TestModel;
+use LaravelMl\Tests\Models\TestModelItem;
 
 class DatabaseSyncCommandTest extends BaseTest
 {
@@ -65,7 +65,7 @@ class DatabaseSyncCommandTest extends BaseTest
     {
         config([ 'laravel-ml.token' => 'abc']);
 
-        $modelName = (new TestModel())->ml()->database()->name();
+        $modelName = (new TestModelItem())->ml()->database()->name();
 
         Http::fake([
             '*' => Http::response([], 404),
@@ -84,7 +84,7 @@ class DatabaseSyncCommandTest extends BaseTest
     {
         config([ 'laravel-ml.token' => 'abc']);
 
-        $recordConfig = (new TestModel())->ml();
+        $recordConfig = (new TestModelItem())->ml();
         $modelName = $recordConfig->database()->name();
         $type = $recordConfig->database()->type();
         $datatype = $recordConfig->database()->datatype();
@@ -120,7 +120,7 @@ class DatabaseSyncCommandTest extends BaseTest
     {
         config([ 'laravel-ml.token' => 'abc']);
 
-        $recordConfig = (new TestModel())->ml();
+        $recordConfig = (new TestModelItem())->ml();
         $modelName = $recordConfig->database()->name();
         $type = $recordConfig->database()->type();
 
@@ -133,7 +133,7 @@ class DatabaseSyncCommandTest extends BaseTest
             ], 200),
         ]);
 
-        $existingModel = TestModel::create([
+        $existingModel = TestModelItem::create([
             'name' => 'zach',
             'age' => 25,
             'salary' => 50000,
@@ -159,7 +159,7 @@ class DatabaseSyncCommandTest extends BaseTest
     {
         config([ 'laravel-ml.token' => 'abc']);
 
-        $modelName = (new TestModel())->ml()->database()->name();
+        $modelName = (new TestModelItem())->ml()->database()->name();
 
         Http::fake([
             Api::HOST . '/databases/' . $modelName => Http::sequence()
