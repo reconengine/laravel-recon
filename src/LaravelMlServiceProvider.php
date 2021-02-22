@@ -3,6 +3,7 @@
 namespace LaravelMl;
 
 use Illuminate\Support\ServiceProvider;
+use LaravelMl\Api\Api;
 use LaravelMl\Commands\MlCommand;
 
 class LaravelMlServiceProvider extends ServiceProvider

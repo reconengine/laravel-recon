@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelMl;
+namespace LaravelMl\Api;
 
 use Illuminate\Support\Facades\Facade;
 

@@ -1,10 +1,13 @@
 <?php
 
-namespace LaravelMl;
+namespace LaravelMl\Api;
 
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
+use LaravelMl\Exceptions\DatatypeMismatchException;
+use LaravelMl\LmlDatabaseConfig;
+use LaravelMl\LmlRecord;
+use LaravelMl\LmlRecordConfig;
 
 class Api
 {
@@ -96,7 +99,7 @@ class Api
     /**
      * @param LmlRecordConfig $config
      * @return mixed
-     * @throws Exceptions\DatatypeMismatchException
+     * @throws DatatypeMismatchException
      */
     public function createRecord(LmlRecordConfig $config)
     {
@@ -108,7 +111,7 @@ class Api
     /**
      * @param LmlRecordConfig $config
      * @return mixed
-     * @throws Exceptions\DatatypeMismatchException
+     * @throws DatatypeMismatchException
      */
     public function updateRecord(LmlRecordConfig $config)
     {
@@ -129,7 +132,7 @@ class Api
     /**
      * @param LmlRecordConfig $config
      * @return array|mixed
-     * @throws Exceptions\DatatypeMismatchException
+     * @throws DatatypeMismatchException
      * @throws \Illuminate\Http\Client\RequestException
      */
     public function predict(LmlRecordConfig $config)
@@ -143,6 +146,56 @@ class Api
         $response->throw();
 
         return $response->json();
+    }
+
+    /**
+     * @param LmlRecordConfig $config
+     * @return array|mixed
+     * @throws DatatypeMismatchException
+     * @throws \Illuminate\Http\Client\RequestException
+     */
+    public function associate(LmlRecordConfig $from, LmlRecordConfig $to, float $weight, string $description = null)
+    {
+        $from->validate();
+        $to->validate();
+
+        $response = $this->http()->post(self::HOST . "/databases/{$from->database()->name()}/records/{$from->networkId()}/associate/{$to->networkId()}", [
+            'weight' => $weight,
+            'description' => $description,
+        ]);
+
+        $response->throw();
+
+        return $response->json();
+    }
+
+    /**
+     * @param LmlRecordConfig $config
+     * @return array|mixed
+     * @throws DatatypeMismatchException
+     * @throws \Illuminate\Http\Client\RequestException
+     */
+    public function recommend(LmlRecordConfig $record, RecommendationRequest $request)
+    {
+        $record->validate();
+        // We should NOT validate $to. We only need that to get the class from it.
+
+        $response = $this->http()->post(self::HOST . "/databases/{$record->database()->name()}/records/{$record->networkId()}/recommend", $request->toArray());
+
+        $response->throw();
+
+        return $response->json();
+    }
+
+    /**
+     * @param LmlRecordConfig $config
+     * @return array|mixed
+     * @throws DatatypeMismatchException
+     * @throws \Illuminate\Http\Client\RequestException
+     */
+    public function similar(LmlRecordConfig $record)
+    {
+        // TODO:
     }
 
     /**

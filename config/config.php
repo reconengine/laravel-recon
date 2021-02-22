@@ -6,10 +6,12 @@
 return [
     'token' => env('ML_API_TOKEN'),
 
-    'databases' => [
+    'database' => env('ML_DEFAULT_DATABASE'),
+
+//    'databases' => [
 //        \LaravelMl\LmlDatabaseConfig::make()
 //            ->setName('yourDatabase')
 //            ->setType(\LaravelMl\LmlDatabaseConfig::TYPE_ANOMALY)
 //            ->setDatatype(\LaravelMl\LmlDatabaseConfig::DATATYPE_CONTINUOUS)
-    ]
+//    ]
 ];

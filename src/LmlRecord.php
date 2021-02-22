@@ -4,6 +4,9 @@
 namespace LaravelMl;
 
 
+use LaravelMl\Api\ApiFacade;
+use LaravelMl\Api\RecommendationRequest;
+
 trait LmlRecord
 {
     /**
@@ -45,6 +48,28 @@ trait LmlRecord
         $response = $this->predictRaw();
 
         return $response['data'][0];
+    }
+
+    /**
+     * @param $record
+     * @param float $weight
+     * @param string|null $description
+     * @return mixed
+     */
+    public function associate($record, float $weight, string $description = null)
+    {
+        return ApiFacade::associate($this->ml(), $record->ml(), $weight, $description);
+    }
+
+    /**
+     * @param $record
+     * @param float $weight
+     * @param string|null $description
+     * @return mixed
+     */
+    public function recommend($record, RecommendationRequest $request)
+    {
+        return ApiFacade::recommend($this->ml(), $request);
     }
 
     /**

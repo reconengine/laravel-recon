@@ -76,6 +76,14 @@ class LmlRecordConfig
     }
 
     /**
+     * @return mixed
+     */
+    public function class()
+    {
+        return $this->class;
+    }
+
+    /**
      * @return string
      */
     public function networkId()
