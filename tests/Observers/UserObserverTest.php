@@ -16,7 +16,7 @@ class UserObserverTest extends BaseTest
 
         config([
             'laravel-ml' => [
-                'database' => 'yellowstone-ai',
+                'database' => '::database::',
             ]
         ]);
     }
@@ -34,10 +34,10 @@ class UserObserverTest extends BaseTest
         ]);
 
         Http::assertSent(function (Request $request) use ($testModel) {
-            return Str::contains($request->url(), ['/api/databases/yellowstone-ai/users'])
+            return Str::contains($request->url(), ['/api/databases/::database::/users'])
                 && $request->method() === 'POST'
-                && $request['uid'] === $testModel->id
-                && $request['metadata'] === [
+                && $request['users'][0]['uid'] === $testModel->id
+                && $request['users'][0]['metadata'] === [
                     'gender' => 'Male',
                     'age' => 22,
                     'salary' => 124567,
@@ -61,10 +61,10 @@ class UserObserverTest extends BaseTest
         ]);
 
         Http::assertSent(function (Request $request) use ($testModel) {
-            return Str::contains($request->url(), ['/api/databases/yellowstone-ai/users'])
+            return Str::contains($request->url(), ['/api/databases/::database::/users'])
                 && $request->method() === 'POST'
-                && $request['uid'] === $testModel->id
-                && $request['metadata'] === [
+                && $request['users'][0]['uid'] === $testModel->id
+                && $request['users'][0]['metadata'] === [
                     'gender' => 'Male',
                     'age' => 22,
                     'salary' => 98765,
@@ -87,9 +87,9 @@ class UserObserverTest extends BaseTest
         $testModel->save();
 
         Http::assertNotSent(function (Request $request) use ($testModel) {
-            return Str::contains($request->url(), ['/api/databases/yellowstone-ai/users'])
+            return Str::contains($request->url(), ['/api/databases/::database::/users'])
                 && $request->method() === 'POST'
-                && $request['uid'] === $testModel->id;
+                && $request['users'][0]['uid'] === $testModel->id;
         });
     }
 
@@ -110,9 +110,9 @@ class UserObserverTest extends BaseTest
         ]);
 
         Http::assertNotSent(function (Request $request) use ($testModel) {
-            return Str::contains($request->url(), ['/api/databases/yellowstone-ai/users'])
+            return Str::contains($request->url(), ['/api/databases/::database::/users'])
                 && $request->method() === 'POST'
-                && $request['uid'] === $testModel->id;
+                && $request['users'][0]['uid'] === $testModel->id;
         });
     }
 }

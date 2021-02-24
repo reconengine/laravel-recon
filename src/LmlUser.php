@@ -12,6 +12,8 @@ trait LmlUser
 {
     use LmlModel;
 
+    abstract protected function define(SchemaDefinition $definition);
+
     /**
      * Hook
      */

@@ -36,6 +36,6 @@ class UpdateUserJob implements ShouldQueue
      */
     public function handle()
     {
-        ApiFacade::putUser($this->user);
+        ApiFacade::putUsers($this->user);
     }
 }

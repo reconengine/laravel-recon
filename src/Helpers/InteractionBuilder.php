@@ -17,7 +17,8 @@ class InteractionBuilder
     /**
      * @var int The timestamp the interaction occurred at.
      */
-    protected $timestamp;
+    // efff, this is only public because it is hard to assert it's validity.
+    public $timestamp;
 
     /**
      * @var null|string The type of interaction. Ex: 'purchase', 'click', 'view', 'review'.
@@ -84,15 +85,17 @@ class InteractionBuilder
     public function toJson()
     {
         return [
-            'session_id' => $this->sessionId,
-            'type' => $this->action,
-            'timestamp' => $this->timestamp,
-            'value' => $this->value,
-            'iid' => $this->itemId,
-            'uid' => $this->userId,
-            'impressions' => $this->impressions,
-            'metadata' => $this->metadata,
-            'recommendation_id' => $this->recommendationId,
+            [ // yes, this needs to be an array of array.
+                'session_id' => $this->sessionId,
+                'type' => $this->action,
+                'timestamp' => $this->timestamp,
+                'value' => $this->value,
+                'iid' => $this->itemId,
+                'uid' => $this->userId,
+                'impressions' => $this->impressions,
+                'metadata' => $this->metadata,
+                'recommendation_id' => $this->recommendationId,
+            ],
         ];
     }
 
@@ -188,6 +191,6 @@ class InteractionBuilder
 
     public function send()
     {
-        return ApiFacade::putInteraction($this);
+        return ApiFacade::putInteractions($this);
     }
 }

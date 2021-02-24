@@ -36,6 +36,6 @@ class UpdateItemJob implements ShouldQueue
      */
     public function handle()
     {
-        ApiFacade::putItem($this->item);
+        ApiFacade::putItems($this->item);
     }
 }

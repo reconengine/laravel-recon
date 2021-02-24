@@ -6,6 +6,8 @@ use Illuminate\Support\ServiceProvider;
 use Laravel\Observers\LmlItemObserver;
 use LaravelMl\Api\Api;
 use LaravelMl\Commands\MlCommand;
+use LaravelMl\Commands\MlRetrainCommand;
+use LaravelMl\Commands\MlSeedCommand;
 use LaravelMl\Observers\LmlUserObserver;
 
 class LaravelMlServiceProvider extends ServiceProvider
@@ -46,6 +48,8 @@ class LaravelMlServiceProvider extends ServiceProvider
             // Registering package commands.
             $this->commands([
                 MlCommand::class,
+                MlSeedCommand::class,
+                MlRetrainCommand::class,
             ]);
         }
     }

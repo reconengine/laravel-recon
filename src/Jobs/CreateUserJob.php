@@ -33,6 +33,6 @@ class CreateUserJob implements ShouldQueue
      */
     public function handle()
     {
-        ApiFacade::putUser($this->user);
+        ApiFacade::putUsers($this->user);
     }
 }

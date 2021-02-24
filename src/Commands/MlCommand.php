@@ -5,31 +5,44 @@ namespace LaravelMl\Commands;
 
 
 use Illuminate\Console\Command;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Http\Client\Response;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\File;
-use LaravelMl\ApiFacade;
-use LaravelMl\LaravelMl;
-use LaravelMl\LaravelMlFacade;
+use Illuminate\Support\Facades\Artisan;
+use LaravelMl\Api\ApiFacade;
+use LaravelMl\Exceptions\LmlCommandException;
 
 class MlCommand extends Command
 {
+    use CommandHasDatabaseInput;
+
+    const POSSIBLE_DATABASE_COMMANDS = [
+        'Seed' => 'Seed',
+        'Retrain' => 'Retrain',
+        'Delete' => 'Delete',
+        'Nevermind' => 'Nevermind, just lookin\'',
+    ];
+
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'ml';
+    protected $signature = 'ml {--database=}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Syncronize your database and record settings with laravelml.com';
+    protected $description = 'Synchronize your database and record settings with laravelml.com';
 
-    protected $selectedDatabaseNetworkResponse = null;
+    /**
+     * @var string
+     */
+    protected $currentDatabase;
+
+    /**
+     * @var string[]
+     */
+    protected $allDatabases;
 
     /**
      * Create a new command instance.
@@ -48,136 +61,201 @@ class MlCommand extends Command
      */
     public function handle()
     {
-        $existingApiKey = config('laravel-ml.token');
+        try {
+            $this->validateApiKey();
+            $this->currentDatabase = $this->getCurrentDatabase();
+            $this->allDatabases = $this->getAllDatabases();
+            $this->promptDatabaseOptions();
 
-        if (! $existingApiKey) {
-            $this->error('Missing API Key. Add ML_API_TOKEN={apiKey} to your .env file. You can get a key at https://laravelml.com');
+            $action = $this->promptAction();
+            $this->{'handle'.$action}();
+        } catch (LmlCommandException $exception) {
+            $this->error($exception->getMessage());
             return 1;
         }
-
-        $modelClasses = LaravelMlFacade::detectDatabases();
-
-        if ($modelClasses->isEmpty()) {
-            $this->error('No Laravel ML databases detected. Did you set it up correctly?');
-            return 1;
-        }
-
-        $modelClasses = collect($modelClasses)->mapWithKeys(function (string $modelClass) {
-            $model = new $modelClass;
-            return [$model->ml()->database()->name() => $model];
-        });
-
-        $choice = $this->choice(
-            'Which ML Record Definition would you like to work with?',
-            $modelClasses->keys()->toArray()
-        );
-
-        $modelClass = $modelClasses->get($choice);
-
-        if (! $modelClass) {
-            $this->error('Invalid choice. Please try again.');
-            return 1;
-        }
-
-        $this->printModelInformation($modelClass);
-        $modelClass->ml()->database()->validate();
-        $action = $this->promptAction($choice);
-
-        switch ($action) {
-            case 'Create': return $this->store($modelClass);
-            case 'Sync': return $this->sync($modelClass);
-            case 'Delete': return $this->delete($modelClass);
-            default:
-                $this->error('Invalid choice. Please try again.');
-                return 1;
-        }
-    }
-
-    protected function printModelInformation($model)
-    {
-        /**
-         * @var Response $remoteModelRecord
-         */
-        $remoteModelRecord = ApiFacade::showDatabase($model->ml()->database());
-
-        if ($remoteModelRecord->status() === 404) {
-            $this->warn('Database does not exist yet.');
-            return;
-        } elseif ($remoteModelRecord->status() !== 200) {
-            $remoteModelRecord->throw();
-        }
-
-        $modelName = $remoteModelRecord['data']['name'];
-        $modelType = $remoteModelRecord['data']['type'];
-
-        $this->selectedDatabaseNetworkResponse = $remoteModelRecord;
-        $this->line("Database:  {$modelName}");
-        $this->line("Type:      {$modelType}");
-    }
-
-    protected function promptAction($choice)
-    {
-        $actions = $this->selectedDatabaseNetworkResponse === null ? [
-            'Create',
-        ] : [
-            'Sync',
-            'Delete',
-        ];
-
-        return $this->choice(
-            "Which action would you like to perform on {$choice}?",
-            $actions
-        );
-    }
-
-    protected function store($model)
-    {
-        $expectedModelType = $model->ml()->database()->type();
-        $expectedDatatype = $model->ml()->database()->datatype();
-
-        if (! $expectedModelType) {
-            $this->error('No model type set in the config.');
-            $this->info('Please set a model type in the config() method and try again.');
-            return 1;
-        }
-
-        if (! $expectedDatatype) {
-            $this->error('No datatype set in the config.');
-            $this->info('Please set a datatype in the config() method and try again.');
-            return 1;
-        }
-
-        if (! $this->confirm("Detected type: {$expectedModelType} ({$expectedDatatype}). Is this correct?")) {
-            $this->info('Please update the model type in the config() method and try again.');
-            return 1;
-        }
-
-        $response = ApiFacade::storeDatabase($model->ml()->database());
-
-        $response->throw(); // throw if not successful.
 
         return 0;
     }
 
-    protected function sync($model)
+    /**
+     * @throws LmlCommandException
+     */
+    protected function validateApiKey()
     {
-        ApiFacade::syncDatabase($model, function (Collection $models) {
-            $firstId = $models->first()->id;
-            $lastId = $models->last()->id;
-            $this->info("Imported records {$firstId}-{$lastId}");
-        });
-
-        return 0;
+        if (! config('laravel-ml.token')) {
+            throw new LmlCommandException('Missing API Key. Add ML_API_TOKEN={apiKey} to your .env file. You can get a key at https://laravelml.com');
+        }
     }
 
-    protected function delete($model)
+    /**
+     * @return string[]
+     */
+    protected function getAllDatabases()
     {
-        if ($this->confirm('Are you sure you want to delete this database? This cannot be undone.')) {
-            $response = ApiFacade::deleteDatabase($model->ml()->database());
+        $databasesNetworkResponse = ApiFacade::getDatabases();
 
+        $databasesNetworkResponse->throw();
+
+        return collect($databasesNetworkResponse->json()['data'])->pluck('name')->toArray();
+    }
+
+    /**
+     * We have now loaded allDatabases and the currentDatabase (from config).
+     *
+     * 1. If no local database, then
+     *      a. if remote, prompt to use a remote one and write to .env file
+     *      b. if no remote, prompt to create a database with name input
+     * 2. If local database, then
+     *      a. if no remote, promt to create a new one with that name
+     *      b. if remote, display all remote with (default) after
+     */
+    protected function promptDatabaseOptions()
+    {
+        if ($this->currentDatabase) {
+            if ($this->allDatabases) {
+                $this->displayAllDatabases();
+            } else {
+                $this->promptCreateDatabaseWithName($this->currentDatabase);
+            }
+        } else {
+            if ($this->allDatabases) {
+                $this->promptSelectARemoteAndWriteToEnvFile();
+            } else {
+                $this->promptCreateDatabaseWithUserSuppliedName();
+            }
+        }
+    }
+
+    /**
+     *
+     */
+    protected function promptSelectARemoteAndWriteToEnvFile()
+    {
+        if ($selectedRemoteDatabase = $this->choice(
+            "No local database set. Would you like to use an existing database?",
+            $this->allDatabases
+        )) {
+            $this->writeToEnvFile("ML_DEFAULT_DATABASE={$selectedRemoteDatabase}");
+        }
+    }
+
+    /**
+     *
+     */
+    protected function promptCreateDatabaseWithUserSuppliedName()
+    {
+        if ($userInput = $this->ask("Not local database set. Let's make you a new one. What would you like to call it (alphanumeric, '-', or '_')?")) {
+            $this->promptCreateDatabaseWithName($userInput);
+            $this->writeToEnvFile("ML_DEFAULT_DATABASE={$userInput}");
+        }
+    }
+
+    /**
+     * @param string $name
+     */
+    protected function promptCreateDatabaseWithName(string $name)
+    {
+        if ($this->confirm("Would you like to create database: '{$name}'?")) {
+            $response = ApiFacade::storeDatabase($name);
             $response->throw();
         }
+    }
 
-        return 0;
+    /**
+     *
+     */
+    protected function displayAllDatabases()
+    {
+        if (! $this->doesDefaultDatabaseExistRemotely()) {
+            $this->warn("Database '{$this->currentDatabase}' does not exist on laravel-ml.com.");
+        }
+
+        $this->line('');
+        $this->line('**************************************************************');
+        $this->line('** Databases:');
+        foreach ($this->allDatabases as $i => $database) {
+            $index = $i + 1;
+            $suxif = $database === $this->currentDatabase ? ' (default)' : '';
+            $this->line("**  {$index}. {$database}{$suxif}");
+        }
+        $this->line('**************************************************************');
+        $this->line('');
+    }
+
+    /**
+     * Write $string to a new line in the .env file.
+     *
+     * @param string $string
+     */
+    protected function writeToEnvFile(string $string)
+    {
+        $path = base_path('.env');
+        if (file_exists($path)) {
+            file_put_contents($path, file_get_contents($path) . "{$string}");
+        }
+    }
+
+    /**
+     * @return bool
+     */
+    protected function doesDefaultDatabaseExistRemotely()
+    {
+        return in_array($this->currentDatabase, $this->allDatabases);
+    }
+
+    /**
+     * @param $choice
+     * @return array|string
+     * @throws LmlCommandException
+     */
+    protected function promptAction()
+    {
+        $options = collect(self::POSSIBLE_DATABASE_COMMANDS);
+
+        $choice = $this->choice(
+            "Which action would you like to perform on '{$this->currentDatabase}'?",
+            $options->values()->toArray()
+        );
+
+        // lookup the command name from the user friendly label.
+        $command = $options->search($choice);
+        if (! $command) {
+            throw new LmlCommandException('Unsupported command.');
+        }
+
+        if (! method_exists($this, 'handle'.$command)) {
+            throw new LmlCommandException('Unsupported command.');
+        }
+
+        return $command;
+    }
+
+    protected function handleSeed()
+    {
+        Artisan::call('ml:seed', [
+            '--database' => $this->currentDatabase,
+        ]);
+    }
+
+    protected function handleRetrain()
+    {
+        Artisan::call('ml:retrain', [
+            '--database' => $this->currentDatabase,
+        ]);
+    }
+
+    protected function handleDelete()
+    {
+        $this->warn('Deleting a database from the command line is currently not supported. Please delete on laravel-ml.com.');
+    }
+
+    protected function handleNevermind()
+    {
+        $this->line('I appreciate you 👋');
+    }
+
+    protected function checkForNetworkError()
+    {
+
     }
 }
