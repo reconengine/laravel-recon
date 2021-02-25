@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 use LaravelMl\Api\Api;
 use LaravelMl\Tests\BaseTest;
 use LaravelMl\Tests\Models\TestModelItem;
+use LaravelMl\Tests\Models\TestModelUser;
 
 class DatabaseMlCommandTest extends BaseTest
 {
@@ -60,6 +61,7 @@ class DatabaseMlCommandTest extends BaseTest
 
         $this->artisan('ml')
             ->expectsChoice('No local database set. Would you like to use an existing database?', '::database1::', ['::database1::', '::database2::'])
+            ->expectsQuestion("Which action would you like to perform on '::database1::'?", 'Nevermind, just lookin\'')
             ->assertExitCode(0)
         ;
 
@@ -85,6 +87,7 @@ class DatabaseMlCommandTest extends BaseTest
 
         $this->artisan('ml')
             ->expectsConfirmation("Would you like to create database: '::database::'?", 'Yes')
+            ->expectsQuestion("Which action would you like to perform on '::database::'?", 'Nevermind, just lookin\'')
             ->assertExitCode(0)
         ;
 
@@ -114,15 +117,18 @@ class DatabaseMlCommandTest extends BaseTest
         ]);
 
         $this->artisan('ml')
-            ->expectsQuestion('Would you like to create a new database?', '::database::')
+            ->expectsQuestion("Not local database set. Let's make you a new one. What would you like to call it (alphanumeric, '-', or '_')?", '::database::')
             ->expectsConfirmation("Would you like to create database: '::database::'?", 'Yes')
+            ->expectsQuestion("Which action would you like to perform on '::database::'?", 'Nevermind, just lookin\'')
             ->assertExitCode(0)
         ;
 
         Http::assertSent(function (Request $request) {
             return Str::contains($request->url(), ['/api/databases'])
                 && $request->method() === 'POST'
-                && $request['name'] === '::database::';
+                && $request['name'] === '::database::'
+                && $request['user_schema'] === (new TestModelUser())->getLmlDefinition()->toJson()
+                && $request['item_schema'] === (new TestModelItem())->getLmlDefinition()->toJson();
         });
 
         // TODO: assert .env file was written to.
@@ -190,6 +196,7 @@ class DatabaseMlCommandTest extends BaseTest
 
         $this->artisan('ml')
             ->expectsOutput("Database '::database_not_in_Http_response::' does not exist on laravel-ml.com.")
+            ->expectsQuestion("Which action would you like to perform on '::database_not_in_Http_response::'?", 'Nevermind, just lookin\'')
             ->assertExitCode(0)
         ;
     }
@@ -221,6 +228,7 @@ class DatabaseMlCommandTest extends BaseTest
 
         $this->artisan('ml --database=::database2::')
             ->expectsOutput('**  2. ::database2:: (default)')
+            ->expectsQuestion("Which action would you like to perform on '::database2::'?", 'Nevermind, just lookin\'')
             ->assertExitCode(0)
         ;
     }

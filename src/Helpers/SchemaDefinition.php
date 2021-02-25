@@ -85,7 +85,7 @@ class SchemaDefinition
     {
         return $this->properties->reduce(function (array $json, SchemaProperty $property) {
             return $json + $property->toJson();
-        }, [])->toArray();
+        }, []);
     }
 
     /**

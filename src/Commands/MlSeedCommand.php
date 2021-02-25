@@ -5,13 +5,14 @@ namespace LaravelMl\Commands;
 
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Collection;
 use LaravelMl\Api\ApiFacade;
 use LaravelMl\Exceptions\LmlCommandException;
+use LaravelMl\LmlItem;
+use LaravelMl\LmlUser;
 
-class MlSeedCommand extends Command
+class MlSeedCommand extends BaseMlCommand
 {
-    use CommandHasDatabaseInput;
-
     /**
      * The name and signature of the console command.
      *
@@ -43,9 +44,27 @@ class MlSeedCommand extends Command
      */
     public function handle()
     {
-        $database = $this->getCurrentDatabase();
+        $userClass = $this->findSchemaClass(LmlUser::class);
+        $itemClass = $this->findSchemaClass(LmlItem::class);
 
-        ApiFacade::seedDatabase($database);
+        $this->line('');
+        $this->line("Seeding with User class: {$userClass}");
+        $this->line("Seeding with Item class: {$itemClass}");
+        $this->line('');
+
+        $userClass::orderBy('id')->chunk(250, function (Collection $users) {
+            ApiFacade::putUsers($users);
+            $firstId = $users->first()->id;
+            $lastId = $users->last()->id;
+            $this->info("Imported users {$firstId}-{$lastId}");
+        });
+
+        $itemClass::orderBy('id')->chunk(250, function (Collection $items) {
+            ApiFacade::putItems($items);
+            $firstId = $items->first()->id;
+            $lastId = $items->last()->id;
+            $this->info("Imported items {$firstId}-{$lastId}");
+        });
 
         return 0;
     }

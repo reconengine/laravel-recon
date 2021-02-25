@@ -7,6 +7,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use LaravelMl\Exceptions\DatatypeMismatchException;
 use LaravelMl\Helpers\InteractionBuilder;
+use LaravelMl\Helpers\SchemaDefinition;
 use LaravelMl\LmlItem;
 
 class Api
@@ -33,19 +34,23 @@ class Api
      */
     public function getDatabases()
     {
-        return $this->http()->get(self::HOST . "/databases");
+        return $this->http()->get(self::HOST . "/databases")->throw();
     }
 
 
     /**
      * @param string $name
+     * @param SchemaDefinition $userSchema
+     * @param SchemaDefinition $itemSchema
      * @return mixed
      */
-    public function storeDatabase(string $name)
+    public function storeDatabase(string $name, SchemaDefinition $userSchema, SchemaDefinition $itemSchema)
     {
         return $this->http()->post(self::HOST . "/databases", [
             'name' => $name,
-        ]);
+            'user_schema' => $userSchema->toJson(),
+            'item_schema' => $itemSchema->toJson(),
+        ])->throw();
     }
 
     /**
@@ -55,7 +60,7 @@ class Api
      */
     public function updateDatabase(string $name, array $data)
     {
-        return $this->http()->put(self::HOST . "/databases/{$name}", $data);
+        return $this->http()->put(self::HOST . "/databases/{$name}", $data)->throw();
     }
 
     /**
@@ -67,51 +72,18 @@ class Api
     {
         return $this->http()->put(self::HOST . "/databases/{$name}", [
             'retrain' => true,
-        ]);
-    }
-
-    /**
-     * @param string $name
-     * @param callable|null $progress
-     * @return bool
-     */
-    public function seedDatabase(string $name, callable $progress = null)
-    {
-//        $databaseName = $model->ml()->database()->name();
-//        $model::chunk(250, function (Collection $records) use ($databaseName, $progress) {
-//            $samples = $records->map(function ($record) {
-//                /**
-//                 * @var LmlItem $record
-//                 */
-//                if ($record->isTrainable()) {
-//                    return $record->ml()->toJson();
-//                }
-//
-//                return null;
-//            })->filter();
-//
-//            $response = $this->http()->post(self::HOST . "/databases/{$databaseName}/train", [
-//                'samples' => $samples->toArray(),
-//            ]);
-//
-//            $response->throw();
-//
-//            if ($progress) {
-//                $progress($records);
-//            }
-//        });
-//
-//        return true;
+        ])->throw();
     }
 
     /**
      * @param Model $model
      * @return \Illuminate\Http\Client\Response
      */
-    public function putUsers(Model $model)
+    public function putUsers($model)
     {
         $models = $model instanceof Model ? collect([$model]) : $model;
 
+        $models = $models->filter->isTrainable();
         $modelsRawJson = $models->map(function ($model) {
             return [
                 'uid' => $model->id,
@@ -121,7 +93,7 @@ class Api
 
         return $this->http()->post(self::HOST . "/databases/{$this->database}/users", [
             'users' => $modelsRawJson->toArray()
-        ]);
+        ])->throw();
     }
 
     /**
@@ -132,6 +104,7 @@ class Api
     {
         $models = $model instanceof Model ? collect([$model]) : $model;
 
+        $models = $models->filter->isTrainable();
         $modelsRawJson = $models->map(function ($model) {
             return [
                 'iid' => $model->id,
@@ -141,7 +114,7 @@ class Api
 
         return $this->http()->post(self::HOST . "/databases/{$this->database}/items", [
             'items' => $modelsRawJson->toArray()
-        ]);
+        ])->throw();
     }
 
     /**
@@ -152,7 +125,7 @@ class Api
     {
         return $this->http()->post(self::HOST . "/databases/{$this->database}/interactions", [
             'interactions' => $interactionBuilder->toJson(),
-        ]);
+        ])->throw();
     }
 
     /**

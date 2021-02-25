@@ -3,6 +3,7 @@
 namespace LaravelMl\Tests\Commands;
 
 use Illuminate\Http\Client\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
@@ -10,6 +11,7 @@ use LaravelMl\Api\Api;
 use LaravelMl\Api\ApiFacade;
 use LaravelMl\Tests\BaseTest;
 use LaravelMl\Tests\Models\TestModelItem;
+use LaravelMl\Tests\Models\TestModelUser;
 
 class DatabaseSeedCommandTest extends BaseTest
 {
@@ -34,7 +36,36 @@ class DatabaseSeedCommandTest extends BaseTest
             ],
         ]);
 
-        ApiFacade::shouldReceive('seedDatabase')->with('::database1::');
+        $user1 = TestModelUser::create([
+            'name' => 'John Doe',
+            'gender' => 'Male',
+            'age' => 22,
+            'salary' => 100,
+        ]);
+        $user2 = TestModelUser::create([
+            'name' => 'Jane Doe',
+            'gender' => 'Female',
+            'age' => 22,
+            'salary' => 100,
+        ]);
+
+        $item1 = TestModelItem::create([
+            'color' => 'red',
+            'rating' => 4.45,
+            'ratings' => 132,
+        ]);
+        $item2 = TestModelItem::create([
+            'color' => 'blue',
+            'rating' => 4.45,
+            'ratings' => 132,
+        ]);
+
+        ApiFacade::shouldReceive('putUsers')->once()->withArgs(function (Collection $collection) use ($user1, $user2) {
+            return $collection->count() === 2 && $collection[0]->is($user1) && $collection[1]->is($user2);
+        });
+        ApiFacade::shouldReceive('putItems')->once()->withArgs(function (Collection $collection) use ($item1, $item2) {
+            return $collection->count() === 2 && $collection[0]->is($item1) && $collection[1]->is($item2);
+        });
 
         Artisan::call('ml:seed');
     }

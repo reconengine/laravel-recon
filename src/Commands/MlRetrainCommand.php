@@ -8,10 +8,8 @@ use Illuminate\Console\Command;
 use LaravelMl\Api\ApiFacade;
 use LaravelMl\Exceptions\LmlCommandException;
 
-class MlRetrainCommand extends Command
+class MlRetrainCommand extends BaseMlCommand
 {
-    use CommandHasDatabaseInput;
-
     /**
      * The name and signature of the console command.
      *

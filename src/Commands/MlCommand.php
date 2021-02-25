@@ -4,15 +4,14 @@
 namespace LaravelMl\Commands;
 
 
-use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Artisan;
 use LaravelMl\Api\ApiFacade;
 use LaravelMl\Exceptions\LmlCommandException;
+use LaravelMl\Exceptions\LmlConfigValidationException;
+use LaravelMl\LmlItem;
+use LaravelMl\LmlUser;
 
-class MlCommand extends Command
+class MlCommand extends BaseMlCommand
 {
-    use CommandHasDatabaseInput;
-
     const POSSIBLE_DATABASE_COMMANDS = [
         'Seed' => 'Seed',
         'Retrain' => 'Retrain',
@@ -136,6 +135,7 @@ class MlCommand extends Command
             $this->allDatabases
         )) {
             $this->writeToEnvFile("ML_DEFAULT_DATABASE={$selectedRemoteDatabase}");
+            $this->currentDatabase = $selectedRemoteDatabase;
         }
     }
 
@@ -147,6 +147,7 @@ class MlCommand extends Command
         if ($userInput = $this->ask("Not local database set. Let's make you a new one. What would you like to call it (alphanumeric, '-', or '_')?")) {
             $this->promptCreateDatabaseWithName($userInput);
             $this->writeToEnvFile("ML_DEFAULT_DATABASE={$userInput}");
+            $this->currentDatabase = $userInput;
         }
     }
 
@@ -156,8 +157,7 @@ class MlCommand extends Command
     protected function promptCreateDatabaseWithName(string $name)
     {
         if ($this->confirm("Would you like to create database: '{$name}'?")) {
-            $response = ApiFacade::storeDatabase($name);
-            $response->throw();
+            $this->createDatabase($name);
         }
     }
 
@@ -168,6 +168,7 @@ class MlCommand extends Command
     {
         if (! $this->doesDefaultDatabaseExistRemotely()) {
             $this->warn("Database '{$this->currentDatabase}' does not exist on laravel-ml.com.");
+            $this->promptCreateDatabaseWithName($this->currentDatabase);
         }
 
         $this->line('');
@@ -180,6 +181,19 @@ class MlCommand extends Command
         }
         $this->line('**************************************************************');
         $this->line('');
+    }
+
+    /**
+     * @param string $name
+     * @throws LmlConfigValidationException
+     */
+    protected function createDatabase(string $name)
+    {
+        $userSchemaDefinition = $this->findSchemaDefinition(LmlUser::class);
+        $itemSchemaDefinition = $this->findSchemaDefinition(LmlItem::class);
+
+        $response = ApiFacade::storeDatabase($name, $userSchemaDefinition, $itemSchemaDefinition);
+        $response->throw();
     }
 
     /**
@@ -230,25 +244,37 @@ class MlCommand extends Command
         return $command;
     }
 
+    /**
+     *
+     */
     protected function handleSeed()
     {
-        Artisan::call('ml:seed', [
+        $this->call('ml:seed', [
             '--database' => $this->currentDatabase,
         ]);
     }
 
+    /**
+     *
+     */
     protected function handleRetrain()
     {
-        Artisan::call('ml:retrain', [
+        $this->call('ml:retrain', [
             '--database' => $this->currentDatabase,
         ]);
     }
 
+    /**
+     *
+     */
     protected function handleDelete()
     {
         $this->warn('Deleting a database from the command line is currently not supported. Please delete on laravel-ml.com.');
     }
 
+    /**
+     *
+     */
     protected function handleNevermind()
     {
         $this->line('I appreciate you 👋');
