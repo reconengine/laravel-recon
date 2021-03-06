@@ -20,44 +20,11 @@ trait LmlItem
         static::observe(LmlItemObserver::class);
     }
 
-//
-//    /**
-//     * @return mixed
-//     */
-//    public function predict()
-//    {
-//        $response = $this->predictRaw();
-//
-//        return $response['data'][0];
-//    }
-//
-//    /**
-//     * @param $record
-//     * @param float $weight
-//     * @param string|null $description
-//     * @return mixed
-//     */
-//    public function associate($record, float $weight, string $description = null)
-//    {
-//        return ApiFacade::associate($this->ml(), $record->ml(), $weight, $description);
-//    }
-//
-//    /**
-//     * @param $record
-//     * @param float $weight
-//     * @param string|null $description
-//     * @return mixed
-//     */
-//    public function recommend($record, RecommendationRequest $request)
-//    {
-//        return ApiFacade::recommend($this->ml(), $request);
-//    }
-
     /**
-     * @return array JSON response array
+     * @return mixed
      */
-//    protected function predictRaw()
-//    {
-//        return ApiFacade::predict($this->ml());
-//    }
+    public function related()
+    {
+        return ApiFacade::getRelatedItems($this);
+    }
 }

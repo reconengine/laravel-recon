@@ -59,24 +59,24 @@ class InteractionBuilder
     /**
      * @param $action string The type of interaction. Ex: 'purchase', 'click', 'view', 'review'.
      * @param $sessionId string Session id of this interaction (defaults to session()->getId()). This is used to bridge interactions for users before they are signed in.
-     * @param $occurredAt string|DateTimeInterface|null Time the event occurred at (default is the current time)
+     * @param $timestamp string|DateTimeInterface|null Time the event occurred at (default is the current time)
      */
-    public function __construct($action, $sessionId = null, $occurredAt = null)
+    public function __construct($action, $sessionId = null, $timestamp = null)
     {
         $this->action = $action;
         $this->sessionId = $sessionId ?? session()->getId();
-        $this->occurredAt = $occurredAt ? Carbon::parse($occurredAt)->timestamp : now()->timestamp;
+        $this->timestamp = $timestamp ? Carbon::parse($timestamp)->timestamp : now()->timestamp;
     }
 
     /**
      * @param $action string The type of interaction. Ex: 'purchase', 'click', 'view', 'review'.
      * @param $sessionId string Session id of this interaction.
-     * @param $occurredAt string|DateTimeInterface|null Time the event occurred at (default is the current time)
+     * @param $timestamp string|DateTimeInterface|null Time the event occurred at (default is the current time)
      * @return static
      */
-    public static function make($action, $sessionId = null, $occurredAt = null)
+    public static function make($action, $sessionId = null, $timestamp = null)
     {
-        return new static($action, $sessionId, $occurredAt);
+        return new static($action, $sessionId, $timestamp);
     }
 
     /**
@@ -145,7 +145,7 @@ class InteractionBuilder
      */
     public function setItemId($itemId)
     {
-        $this->itemId = $itemId;
+        $this->itemId = (string) $itemId;
         return $this;
     }
 
@@ -155,7 +155,7 @@ class InteractionBuilder
      */
     public function setUserId($userId)
     {
-        $this->userId = $userId;
+        $this->userId = (string) $userId;
         return $this;
     }
 

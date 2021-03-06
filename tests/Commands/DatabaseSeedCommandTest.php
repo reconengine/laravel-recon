@@ -36,6 +36,8 @@ class DatabaseSeedCommandTest extends BaseTest
             ],
         ]);
 
+        Http::fake();
+
         $user1 = TestModelUser::create([
             'name' => 'John Doe',
             'gender' => 'Male',
@@ -67,7 +69,7 @@ class DatabaseSeedCommandTest extends BaseTest
             return $collection->count() === 2 && $collection[0]->is($item1) && $collection[1]->is($item2);
         });
 
-        Artisan::call('ml:seed');
+        Artisan::call('ml:seed --users --items');
     }
 
     /** @test */

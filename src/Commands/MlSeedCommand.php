@@ -18,7 +18,7 @@ class MlSeedCommand extends BaseMlCommand
      *
      * @var string
      */
-    protected $signature = 'ml:seed {--database=}';
+    protected $signature = 'ml:seed {--database=} {--users}  {--items}';
 
     /**
      * The console command description.
@@ -44,13 +44,24 @@ class MlSeedCommand extends BaseMlCommand
      */
     public function handle()
     {
-        $userClass = $this->findSchemaClass(LmlUser::class);
-        $itemClass = $this->findSchemaClass(LmlItem::class);
+        if ($this->option('users')) {
+            $this->seedUsers();
+        }
 
-        $this->line('');
+        if ($this->option('items')) {
+            $this->seedItems();
+        }
+
+        return 0;
+    }
+
+    protected function seedUsers()
+    {
+        $userClass = $this->findSchemaClass(LmlUser::class);
+
         $this->line("Seeding with User class: {$userClass}");
-        $this->line("Seeding with Item class: {$itemClass}");
         $this->line('');
+
 
         $userClass::orderBy('id')->chunk(250, function (Collection $users) {
             ApiFacade::putUsers($users);
@@ -58,6 +69,14 @@ class MlSeedCommand extends BaseMlCommand
             $lastId = $users->last()->id;
             $this->info("Imported users {$firstId}-{$lastId}");
         });
+    }
+
+    protected function seedItems()
+    {
+        $itemClass = $this->findSchemaClass(LmlItem::class);
+
+        $this->line("Seeding with Item class: {$itemClass}");
+        $this->line('');
 
         $itemClass::orderBy('id')->chunk(250, function (Collection $items) {
             ApiFacade::putItems($items);
@@ -65,7 +84,5 @@ class MlSeedCommand extends BaseMlCommand
             $lastId = $items->last()->id;
             $this->info("Imported items {$firstId}-{$lastId}");
         });
-
-        return 0;
     }
 }

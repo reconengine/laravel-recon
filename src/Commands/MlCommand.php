@@ -251,6 +251,8 @@ class MlCommand extends BaseMlCommand
     {
         $this->call('ml:seed', [
             '--database' => $this->currentDatabase,
+            '--items' => true,
+            '--users' => true,
         ]);
     }
 

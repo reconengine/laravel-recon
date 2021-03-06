@@ -27,7 +27,7 @@ class Api
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// Models
+    /// Databases
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /**
      * @return mixed
@@ -75,6 +75,9 @@ class Api
         ])->throw();
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Events
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /**
      * @param Model $model
      * @return \Illuminate\Http\Client\Response
@@ -87,6 +90,7 @@ class Api
         $modelsRawJson = $models->map(function ($model) {
             return [
                 'uid' => $model->id,
+                'created_at' => $model->created_at,
                 'metadata' => $model->toLmlJson(),
             ];
         });
@@ -108,6 +112,7 @@ class Api
         $modelsRawJson = $models->map(function ($model) {
             return [
                 'iid' => $model->id,
+                'created_at' => $model->created_at ?? now(),
                 'metadata' => $model->toLmlJson(),
             ];
         });
@@ -126,6 +131,27 @@ class Api
         return $this->http()->post(self::HOST . "/databases/{$this->database}/interactions", [
             'interactions' => $interactionBuilder->toJson(),
         ])->throw();
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Recommendations
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     * @param InteractionBuilder $interactionBuilder
+     * @return \Illuminate\Http\Client\Response
+     */
+    public function getUserRecommendations($model)
+    {
+        return $this->http()->get(self::HOST . "/databases/{$this->database}/recommendations/{$model->id}/per")->throw()->json()['data'];
+    }
+
+    /**
+     * @param InteractionBuilder $interactionBuilder
+     * @return \Illuminate\Http\Client\Response
+     */
+    public function getRelatedItems($model)
+    {
+        return $this->http()->get(self::HOST . "/databases/{$this->database}/recommendations/{$model->id}/rel")->throw()->json()['data'];
     }
 
     /**

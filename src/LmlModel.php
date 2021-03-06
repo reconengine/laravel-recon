@@ -39,4 +39,20 @@ trait LmlModel
 
         return $definition;
     }
+
+    /**
+     * @return bool
+     */
+    public function isLmlItem()
+    {
+        return in_array(LmlItem::class, class_uses(static::class));
+    }
+
+    /**
+     * @return bool
+     */
+    public function isLmlUser()
+    {
+        return in_array(LmlUser::class, class_uses(static::class));
+    }
 }

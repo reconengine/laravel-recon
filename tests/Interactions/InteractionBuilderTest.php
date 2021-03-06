@@ -57,8 +57,9 @@ class InteractionBuilderTest extends BaseTest
 
         Session::shouldReceive('getId')->andReturn('abc');
 
+        // can it be int and string? packing 2 tests in 1. I know they say you shouldn't do it.
         $interaction = (new InteractionBuilder('click'))
-            ->setImpressions([154, '134']) // can it be int and string? packing 2 tests in 1. I know they say you shouldn't do it.
+            ->setImpressions([154, '134'])
             ->setValue(14.5)
             ->setTimestamp(now()->midDay())
             ->setUserId(1534)
