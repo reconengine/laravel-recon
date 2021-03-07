@@ -112,4 +112,5 @@ class GetRecommendationTest extends BaseTest
             ],
         ], $actualRecommendedItemsResponse);
     }
+
 }
