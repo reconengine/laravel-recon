@@ -1,9 +1,9 @@
 # Laravel ML [beta]: Machine Learning predictions brought to Laravel
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/exzachlyvv/laravel-ml.svg?style=flat-square)](https://packagist.org/packages/exzachlyvv/laravel-ml)
-[![Build Status](https://img.shields.io/travis/exzachlyvv/laravel-ml/master.svg?style=flat-square)](https://travis-ci.org/exzachlyvv/laravel-ml)
-[![Quality Score](https://img.shields.io/scrutinizer/g/exzachlyvv/laravel-ml.svg?style=flat-square)](https://scrutinizer-ci.com/g/exzachlyvv/laravel-ml)
-[![Total Downloads](https://img.shields.io/packagist/dt/exzachlyvv/laravel-ml.svg?style=flat-square)](https://packagist.org/packages/exzachlyvv/laravel-ml)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/reconengine/recon-laravel.svg?style=flat-square)](https://packagist.org/packages/reconengine/recon-laravel)
+[![Build Status](https://img.shields.io/travis/reconengine/recon-laravel/master.svg?style=flat-square)](https://travis-ci.org/reconengine/recon-laravel)
+[![Quality Score](https://img.shields.io/scrutinizer/g/reconengine/recon-laravel.svg?style=flat-square)](https://scrutinizer-ci.com/g/reconengine/recon-laravel)
+[![Total Downloads](https://img.shields.io/packagist/dt/reconengine/recon-laravel.svg?style=flat-square)](https://packagist.org/packages/reconengine/recon-laravel)
 
 Add support for continuous, categorical, and anomaly machine learning model prediction in your Laravel applications using Eloquent models.
 
@@ -12,7 +12,7 @@ Add support for continuous, categorical, and anomaly machine learning model pred
 Install package via composer:
 
 ```bash
-composer require exzachlyvv/laravel-ml
+composer require reconengine/recon-laravel
 ```
 
 ## Usage
@@ -105,7 +105,7 @@ machine learning model, please use `php artisan ml` command and select the `Sync
 
 ### Demo
 
-A live demo can be found at [demo.laravelml.com](https://demo.laravelml.com), source code [here](https://github.com/exzachlyvv/demo.laravelml.com).
+A live demo can be found at [demo.laravelml.com](https://demo.laravelml.com), source code [here](https://github.com/reconengine/demo.laravelml.com).
 
 ### Testing
 
@@ -123,7 +123,7 @@ Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
 
 ## Credits
 
-- [Zachary Vander Velden](https://github.com/exzachlyvv)
+- [Recon Engine](https://github.com/reconengine)
 - [All Contributors](../../contributors)
 
 ## License

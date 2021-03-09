@@ -1,5 +1,5 @@
 {
-    "name": "exzachlyvv/recon",
+    "name": "reconengine/recon-laravel",
     "description": "Machine Learning brought to Laravel",
     "keywords": [
         "recon",
@@ -8,7 +8,7 @@
         "neural network",
         "anomaly detection"
     ],
-    "homepage": "https://github.com/exzachlyvv/recon",
+    "homepage": "https://github.com/reconengine/recon-laravel",
     "license": "MIT",
     "type": "library",
     "authors": [

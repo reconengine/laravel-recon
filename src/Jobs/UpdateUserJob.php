@@ -11,7 +11,6 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Recon\Api\ApiFacade;
-use Recon\LmlRecordConfig;
 
 class UpdateUserJob implements ShouldQueue
 {
