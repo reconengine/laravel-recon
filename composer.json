@@ -1,12 +1,17 @@
 {
     "name": "reconengine/recon-laravel",
-    "description": "Machine Learning brought to Laravel",
+    "description": "World class recommendation engine brought to Laravel",
     "keywords": [
         "recon",
         "laravel",
         "machine learning",
         "neural network",
-        "anomaly detection"
+        "recommendation system",
+        "recommendation engine",
+        "collaborative filtering",
+        "users",
+        "items",
+        "interactions"
     ],
     "homepage": "https://github.com/reconengine/recon-laravel",
     "license": "MIT",
@@ -48,10 +53,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "ReconServiceProvider"
+                "Recon\\ReconServiceProvider"
             ],
             "aliases": {
-                "Recon": "ReconFacade"
+                "Recon": "Recon\\ReconFacade"
             }
         }
     }
