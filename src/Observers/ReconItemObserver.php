@@ -1,14 +1,14 @@
 <?php
 
 
-namespace LaravelMl\Observers;
+namespace Recon\Observers;
 
 
 use Illuminate\Database\Eloquent\Model;
-use LaravelMl\Jobs\CreateItemJob;
-use LaravelMl\Jobs\UpdateItemJob;
+use Recon\Jobs\CreateItemJob;
+use Recon\Jobs\UpdateItemJob;
 
-class LmlItemObserver
+class ReconItemObserver
 {
     /**
      * @param Model $record

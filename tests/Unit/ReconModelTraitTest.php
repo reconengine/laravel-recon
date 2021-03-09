@@ -1,18 +1,18 @@
 <?php
 
-namespace LaravelMl\Tests\Unit;
+namespace Recon\Tests\Unit;
 
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
-use LaravelMl\Tests\BaseTest;
-use LaravelMl\Tests\Models\TestModelItem;
-use LaravelMl\Tests\Models\TestModelUser;
+use Recon\Tests\BaseTest;
+use Recon\Tests\Models\TestModelItem;
+use Recon\Tests\Models\TestModelUser;
 
-class LmlModelTraitTest extends BaseTest
+class ReconModelTraitTest extends BaseTest
 {
     /** @test */
-    public function isLmlItem()
+    public function isReconItem()
     {
         Http::fake();
 
@@ -22,12 +22,12 @@ class LmlModelTraitTest extends BaseTest
             'ratings' => 132,
         ]);
 
-        $this->assertTrue($testModel->isLmlItem());
-        $this->assertFalse($testModel->isLmlUser());
+        $this->assertTrue($testModel->isReconItem());
+        $this->assertFalse($testModel->isReconUser());
     }
 
     /** @test */
-    public function isLmlUser()
+    public function isReconUser()
     {
         Http::fake();
 
@@ -38,7 +38,7 @@ class LmlModelTraitTest extends BaseTest
             'salary' => 124567,
         ]);
 
-        $this->assertFalse($testModel->isLmlItem());
-        $this->assertTrue($testModel->isLmlUser());
+        $this->assertFalse($testModel->isReconItem());
+        $this->assertTrue($testModel->isReconUser());
     }
 }

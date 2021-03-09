@@ -1,11 +1,11 @@
 <?php
 
 
-namespace LaravelMl\Helpers;
+namespace Recon\Helpers;
 
 
 use Illuminate\Support\Arr;
-use LaravelMl\Exceptions\LmlConfigValidationException;
+use Recon\Exceptions\ReconConfigValidationException;
 
 class SchemaProperty
 {
@@ -36,12 +36,12 @@ class SchemaProperty
      * SchemaProperty constructor.
      * @param $name
      * @param $datatype
-     * @throws LmlConfigValidationException
+     * @throws ReconConfigValidationException
      */
     public function __construct($name, $datatype)
     {
         if (! in_array($datatype, self::VALID_DATATYPES)) {
-            throw  new LmlConfigValidationException("{$datatype} is an invalid datatype.");
+            throw  new ReconConfigValidationException("{$datatype} is an invalid datatype.");
         }
 
         $this->name = $name;

@@ -1,14 +1,14 @@
 <?php
 
 
-namespace LaravelMl;
+namespace Recon;
 
 
-use LaravelMl\Api\ApiFacade;
-use LaravelMl\Helpers\SchemaDefinition;
-use LaravelMl\Observers\LmlUserObserver;
+use Recon\Api\ApiFacade;
+use Recon\Helpers\SchemaDefinition;
+use Recon\Observers\ReconUserObserver;
 
-trait LmlModel
+trait ReconModel
 {
     /**
      * @return bool
@@ -23,15 +23,15 @@ trait LmlModel
     /**
      * @return array
      */
-    public function toLmlJson()
+    public function toReconJson()
     {
-        return $this->getLmlDefinition()->only($this);
+        return $this->getReconDefinition()->only($this);
     }
 
     /**
      * @return SchemaDefinition
      */
-    public function getLmlDefinition()
+    public function getReconDefinition()
     {
         $definition = new SchemaDefinition();
 
@@ -43,16 +43,16 @@ trait LmlModel
     /**
      * @return bool
      */
-    public function isLmlItem()
+    public function isReconItem()
     {
-        return in_array(LmlItem::class, class_uses(static::class));
+        return in_array(ReconItem::class, class_uses(static::class));
     }
 
     /**
      * @return bool
      */
-    public function isLmlUser()
+    public function isReconUser()
     {
-        return in_array(LmlUser::class, class_uses(static::class));
+        return in_array(ReconUser::class, class_uses(static::class));
     }
 }

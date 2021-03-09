@@ -1,18 +1,18 @@
 <?php
 
-namespace LaravelMl\Api;
+namespace Recon\Api;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
-use LaravelMl\Exceptions\DatatypeMismatchException;
-use LaravelMl\Helpers\InteractionBuilder;
-use LaravelMl\Helpers\SchemaDefinition;
-use LaravelMl\LmlItem;
+use Recon\Exceptions\DatatypeMismatchException;
+use Recon\Helpers\InteractionBuilder;
+use Recon\Helpers\SchemaDefinition;
+use Recon\ReconItem;
 
 class Api
 {
-    const HOST = 'http://localhost:8000/api';//'https://staging.laravelml.com/api';
+    const HOST = 'http://localhost:8000/api';//'https://staging.reconengine.ai/api';
 
     protected $database = '';
     protected $config = [];
@@ -22,8 +22,8 @@ class Api
      */
     public function __construct()
     {
-        $this->config = config('laravel-ml');
-        $this->database = config('laravel-ml.database');
+        $this->config = config('recon');
+        $this->database = config('recon.database');
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -91,7 +91,7 @@ class Api
             return [
                 'uid' => $model->id,
                 'created_at' => $model->created_at,
-                'metadata' => $model->toLmlJson(),
+                'metadata' => $model->toReconJson(),
             ];
         });
 
@@ -113,7 +113,7 @@ class Api
             return [
                 'iid' => $model->id,
                 'created_at' => $model->created_at ?? now(),
-                'metadata' => $model->toLmlJson(),
+                'metadata' => $model->toReconJson(),
             ];
         });
 
@@ -159,7 +159,7 @@ class Api
      */
     protected function http()
     {
-        return Http::withToken(config('laravel-ml.token'))
+        return Http::withToken(config('recon.token'))
             ->withHeaders([
                 'Accept' => 'application/json',
                 'Content-type' => 'application/json',

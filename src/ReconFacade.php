@@ -1,10 +1,10 @@
 <?php
 
-namespace LaravelMl;
+namespace Recon;
 
 use Illuminate\Support\Facades\Facade;
 
-class LaravelMlFacade extends Facade
+class ReconFacade extends Facade
 {
     /**
      * Get the registered name of the component.
@@ -13,6 +13,6 @@ class LaravelMlFacade extends Facade
      */
     protected static function getFacadeAccessor()
     {
-        return 'laravel-ml';
+        return 'recon';
     }
 }

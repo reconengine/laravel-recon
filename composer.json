@@ -1,19 +1,20 @@
 {
-    "name": "exzachlyvv/laravel-ml",
+    "name": "exzachlyvv/recon",
     "description": "Machine Learning brought to Laravel",
     "keywords": [
-        "laravel-ml",
+        "recon",
+        "laravel",
         "machine learning",
         "neural network",
         "anomaly detection"
     ],
-    "homepage": "https://github.com/exzachlyvv/laravel-ml",
+    "homepage": "https://github.com/exzachlyvv/recon",
     "license": "MIT",
     "type": "library",
     "authors": [
         {
-            "name": "Zachary Vander Velden",
-            "email": "zachvv11@gmail.com",
+            "name": "Recon Engine",
+            "email": "contact@reconengine.ai",
             "role": "Developer"
         }
     ],
@@ -28,12 +29,12 @@
     },
     "autoload": {
         "psr-4": {
-            "LaravelMl\\": "src"
+            "Recon\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "LaravelMl\\Tests\\": "tests"
+            "Recon\\Tests\\": "tests"
         }
     },
     "scripts": {
@@ -47,10 +48,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "LaravelMl\\LaravelMlServiceProvider"
+                "ReconServiceProvider"
             ],
             "aliases": {
-                "LaravelMl": "LaravelMl\\LaravelMlFacade"
+                "Recon": "ReconFacade"
             }
         }
     }

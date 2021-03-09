@@ -1,31 +1,31 @@
 <?php
 
 
-namespace LaravelMl\Commands;
+namespace Recon\Commands;
 
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
-use LaravelMl\Api\ApiFacade;
-use LaravelMl\Exceptions\LmlCommandException;
-use LaravelMl\LmlItem;
-use LaravelMl\LmlUser;
+use Recon\Api\ApiFacade;
+use Recon\Exceptions\ReconCommandException;
+use Recon\ReconItem;
+use Recon\ReconUser;
 
-class MlSeedCommand extends BaseMlCommand
+class ReconSeedCommand extends BaseReconCommand
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'ml:seed {--database=} {--users}  {--items}';
+    protected $signature = 'recon:seed {--database=} {--users}  {--items}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Synchronize your database and record settings with laravelml.com';
+    protected $description = '';
 
     /**
      * Create a new command instance.
@@ -57,7 +57,7 @@ class MlSeedCommand extends BaseMlCommand
 
     protected function seedUsers()
     {
-        $userClass = $this->findSchemaClass(LmlUser::class);
+        $userClass = $this->findSchemaClass(ReconUser::class);
 
         $this->line("Seeding with User class: {$userClass}");
         $this->line('');
@@ -73,7 +73,7 @@ class MlSeedCommand extends BaseMlCommand
 
     protected function seedItems()
     {
-        $itemClass = $this->findSchemaClass(LmlItem::class);
+        $itemClass = $this->findSchemaClass(ReconItem::class);
 
         $this->line("Seeding with Item class: {$itemClass}");
         $this->line('');

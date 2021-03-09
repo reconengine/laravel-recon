@@ -1,16 +1,16 @@
 <?php
 
 
-namespace LaravelMl\Tests\Models;
+namespace Recon\Tests\Models;
 
 
 use Illuminate\Database\Eloquent\Model;
-use LaravelMl\Helpers\SchemaDefinition;
-use LaravelMl\LmlUser;
+use Recon\Helpers\SchemaDefinition;
+use Recon\ReconUser;
 
 class TestModelUser extends Model
 {
-    use LmlUser;
+    use ReconUser;
 
     public $isTrainable = true;
 

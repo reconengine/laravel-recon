@@ -1,21 +1,21 @@
 <?php
 
 
-namespace LaravelMl\Commands;
+namespace Recon\Commands;
 
 
 use Illuminate\Console\Command;
-use LaravelMl\Api\ApiFacade;
-use LaravelMl\Exceptions\LmlCommandException;
+use Recon\Api\ApiFacade;
+use Recon\Exceptions\ReconCommandException;
 
-class MlRetrainCommand extends BaseMlCommand
+class ReconRetrainCommand extends BaseReconCommand
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'ml:retrain {--database=}';
+    protected $signature = 'recon:retrain {--database=}';
 
     /**
      * The console command description.

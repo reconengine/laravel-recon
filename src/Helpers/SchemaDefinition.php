@@ -1,7 +1,7 @@
 <?php
 
 
-namespace LaravelMl\Helpers;
+namespace Recon\Helpers;
 
 
 use Illuminate\Database\Eloquent\Model;
@@ -103,7 +103,7 @@ class SchemaDefinition
      * @param $name
      * @param $datatype
      * @return SchemaProperty
-     * @throws \LaravelMl\Exceptions\LmlConfigValidationException
+     * @throws \Recon\Exceptions\ReconConfigValidationException
      */
     protected function addProperty($name, $datatype)
     {

@@ -4,7 +4,7 @@ namespace Recon\Exceptions;
 
 use Exception;
 
-class DatatypeMismatchException extends Exception
+class ReconCommandException extends Exception
 {
     //
 }

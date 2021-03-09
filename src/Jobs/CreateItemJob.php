@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelMl\Jobs;
+namespace Recon\Jobs;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use LaravelMl\Api\ApiFacade;
+use Recon\Api\ApiFacade;
 
 class CreateItemJob implements ShouldQueue
 {

@@ -1,11 +1,11 @@
 <?php
 
-namespace LaravelMl;
+namespace Recon;
 
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 
-class LaravelMl
+class Recon
 {
     public function __construct()
     {

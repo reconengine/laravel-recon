@@ -1,16 +1,16 @@
 <?php
 
 
-namespace LaravelMl\Commands;
+namespace Recon\Commands;
 
 
-use LaravelMl\Api\ApiFacade;
-use LaravelMl\Exceptions\LmlCommandException;
-use LaravelMl\Exceptions\LmlConfigValidationException;
-use LaravelMl\LmlItem;
-use LaravelMl\LmlUser;
+use Recon\Api\ApiFacade;
+use Recon\Exceptions\ReconCommandException;
+use Recon\Exceptions\ReconConfigValidationException;
+use Recon\ReconItem;
+use Recon\ReconUser;
 
-class MlCommand extends BaseMlCommand
+class ReconCommand extends BaseReconCommand
 {
     const POSSIBLE_DATABASE_COMMANDS = [
         'Seed' => 'Seed',
@@ -24,14 +24,14 @@ class MlCommand extends BaseMlCommand
      *
      * @var string
      */
-    protected $signature = 'ml {--database=}';
+    protected $signature = 'recon {--database=}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Synchronize your database and record settings with laravelml.com';
+    protected $description = '';
 
     /**
      * @var string
@@ -68,7 +68,7 @@ class MlCommand extends BaseMlCommand
 
             $action = $this->promptAction();
             $this->{'handle'.$action}();
-        } catch (LmlCommandException $exception) {
+        } catch (ReconCommandException $exception) {
             $this->error($exception->getMessage());
             return 1;
         }
@@ -77,12 +77,12 @@ class MlCommand extends BaseMlCommand
     }
 
     /**
-     * @throws LmlCommandException
+     * @throws ReconCommandException
      */
     protected function validateApiKey()
     {
-        if (! config('laravel-ml.token')) {
-            throw new LmlCommandException('Missing API Key. Add ML_API_TOKEN={apiKey} to your .env file. You can get a key at https://laravelml.com');
+        if (! config('recon.token')) {
+            throw new ReconCommandException('Missing API Key. Add RECON_TOKEN={apiKey} to your .env file. You can get a key at https://reconengine.ai');
         }
     }
 
@@ -134,7 +134,7 @@ class MlCommand extends BaseMlCommand
             "No local database set. Would you like to use an existing database?",
             $this->allDatabases
         )) {
-            $this->writeToEnvFile("ML_DEFAULT_DATABASE={$selectedRemoteDatabase}");
+            $this->writeToEnvFile("RECON_DATABASE={$selectedRemoteDatabase}");
             $this->currentDatabase = $selectedRemoteDatabase;
         }
     }
@@ -146,7 +146,7 @@ class MlCommand extends BaseMlCommand
     {
         if ($userInput = $this->ask("Not local database set. Let's make you a new one. What would you like to call it (alphanumeric, '-', or '_')?")) {
             $this->promptCreateDatabaseWithName($userInput);
-            $this->writeToEnvFile("ML_DEFAULT_DATABASE={$userInput}");
+            $this->writeToEnvFile("RECON_DATABASE={$userInput}");
             $this->currentDatabase = $userInput;
         }
     }
@@ -167,7 +167,7 @@ class MlCommand extends BaseMlCommand
     protected function displayAllDatabases()
     {
         if (! $this->doesDefaultDatabaseExistRemotely()) {
-            $this->warn("Database '{$this->currentDatabase}' does not exist on laravel-ml.com.");
+            $this->warn("Database '{$this->currentDatabase}' does not exist at https://reconengine.ai.");
             $this->promptCreateDatabaseWithName($this->currentDatabase);
         }
 
@@ -185,12 +185,12 @@ class MlCommand extends BaseMlCommand
 
     /**
      * @param string $name
-     * @throws LmlConfigValidationException
+     * @throws ReconConfigValidationException
      */
     protected function createDatabase(string $name)
     {
-        $userSchemaDefinition = $this->findSchemaDefinition(LmlUser::class);
-        $itemSchemaDefinition = $this->findSchemaDefinition(LmlItem::class);
+        $userSchemaDefinition = $this->findSchemaDefinition(ReconUser::class);
+        $itemSchemaDefinition = $this->findSchemaDefinition(ReconItem::class);
 
         $response = ApiFacade::storeDatabase($name, $userSchemaDefinition, $itemSchemaDefinition);
         $response->throw();
@@ -220,7 +220,7 @@ class MlCommand extends BaseMlCommand
     /**
      * @param $choice
      * @return array|string
-     * @throws LmlCommandException
+     * @throws ReconCommandException
      */
     protected function promptAction()
     {
@@ -234,11 +234,11 @@ class MlCommand extends BaseMlCommand
         // lookup the command name from the user friendly label.
         $command = $options->search($choice);
         if (! $command) {
-            throw new LmlCommandException('Unsupported command.');
+            throw new ReconCommandException('Unsupported command.');
         }
 
         if (! method_exists($this, 'handle'.$command)) {
-            throw new LmlCommandException('Unsupported command.');
+            throw new ReconCommandException('Unsupported command.');
         }
 
         return $command;
@@ -249,7 +249,7 @@ class MlCommand extends BaseMlCommand
      */
     protected function handleSeed()
     {
-        $this->call('ml:seed', [
+        $this->call('recon:seed', [
             '--database' => $this->currentDatabase,
             '--items' => true,
             '--users' => true,
@@ -261,7 +261,7 @@ class MlCommand extends BaseMlCommand
      */
     protected function handleRetrain()
     {
-        $this->call('ml:retrain', [
+        $this->call('recon:retrain', [
             '--database' => $this->currentDatabase,
         ]);
     }
@@ -271,7 +271,7 @@ class MlCommand extends BaseMlCommand
      */
     protected function handleDelete()
     {
-        $this->warn('Deleting a database from the command line is currently not supported. Please delete on laravel-ml.com.');
+        $this->warn('Deleting a database from the command line is currently not supported. Please delete at https://reconengine.ai.');
     }
 
     /**
