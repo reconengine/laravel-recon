@@ -4,6 +4,7 @@
 namespace Recon\Helpers;
 
 
+use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Recon\Exceptions\ReconConfigValidationException;
 
@@ -59,6 +60,30 @@ class SchemaProperty
     }
 
     /**
+     * @param $value
+     * @return mixed
+     */
+    public function cast($value)
+    {
+        $mainDatatype = $this->getMainDatatype();
+
+        switch ($mainDatatype) {
+            case self::DATATYPE_FLOAT:
+            case self::DATATYPE_DOUBLE: return $this->castToFloat($value);
+
+            case self::DATATYPE_INT:
+            case self::DATATYPE_LONG: return $this->castToInt($value);
+
+            case self::DATATYPE_BOOLEAN: return $this->castToBoolean($value);
+
+            case self::DATATYPE_STRING:
+            case self::DATATYPE_CATEGORY: return $this->castToString($value);
+        }
+
+        return $value;
+    }
+
+    /**
      * @return array[]
      */
     public function toJson()
@@ -66,5 +91,55 @@ class SchemaProperty
         return [
             $this->name => $this->datatypes,
         ];
+    }
+
+    /**
+     * @return mixed
+     */
+    protected function getMainDatatype()
+    {
+        return collect($this->datatypes)->first(function ($value) {
+            return $value !== self::DATATYPE_NULL;
+        });
+    }
+
+    /**
+     * @param $value
+     * @return int
+     */
+    protected function castToInt($value)
+    {
+        if ($value instanceof Carbon) {
+            return (int) $value->timestamp;
+        }
+
+        return (int) $value;
+    }
+
+    /**
+     * @param $value
+     * @return bool
+     */
+    protected function castToBoolean($value)
+    {
+        return (boolean) $value;
+    }
+
+    /**
+     * @param $value
+     * @return string
+     */
+    protected function castToString($value)
+    {
+        return (string) $value;
+    }
+
+    /**
+     * @param $value
+     * @return float
+     */
+    protected function castToFloat($value)
+    {
+        return (float) $value;
     }
 }

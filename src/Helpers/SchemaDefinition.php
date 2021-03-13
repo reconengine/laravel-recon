@@ -5,6 +5,7 @@ namespace Recon\Helpers;
 
 
 use Illuminate\Database\Eloquent\Model;
+use Recon\Exceptions\DatatypeNotFoundException;
 
 class SchemaDefinition
 {
@@ -96,7 +97,14 @@ class SchemaDefinition
     {
         $keys = $this->properties->pluck('name');
 
-        return $model->only($keys->toArray());
+        $json = $model->only($keys->toArray());
+
+        // cast the json array.
+        foreach ($json as $key => $value) {
+            $json[$key] = $this->cast($key, $value);
+        }
+
+        return $json;
     }
 
     /**
@@ -112,5 +120,23 @@ class SchemaDefinition
         $this->properties->push($property);
 
         return $property;
+    }
+
+    /**
+     * @param array $json
+     * @return array
+     */
+    protected function cast($key, $value)
+    {
+        /**
+         * @var SchemaProperty|null $property
+         */
+        $property = $this->properties->firstWhere('name', $key);
+
+        if (! $property) {
+            throw new DatatypeNotFoundException('Failed to find the column\'s definition.');
+        }
+
+        return $property->cast($value);
     }
 }
