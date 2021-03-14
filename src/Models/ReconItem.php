@@ -1,11 +1,10 @@
 <?php
 
 
-namespace Recon;
+namespace Recon\Models;
 
 
 use Recon\Api\ApiFacade;
-use Recon\Helpers\SchemaDefinition;
 use Recon\Observers\ReconItemObserver;
 
 trait ReconItem

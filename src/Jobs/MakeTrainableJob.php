@@ -8,22 +8,23 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Collection;
 use Recon\Api\ApiFacade;
 
-class CreateItemJob implements ShouldQueue
+class MakeTrainableJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $item;
+    public $items;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(Model $item)
+    public function __construct(Collection $items)
     {
-        $this->item = $item;
+        $this->items = $items;
     }
 
     /**
@@ -33,6 +34,16 @@ class CreateItemJob implements ShouldQueue
      */
     public function handle()
     {
-        ApiFacade::putItems($this->item);
+        if ($this->items->isEmpty()) {
+            return;
+        }
+
+        $first = $this->items->first();
+
+        if ($first->isReconItem()) {
+            ApiFacade::putItems($this->items);
+        } elseif ($first->isReconUser()) {
+            ApiFacade::putUsers($this->items);
+        }
     }
 }

@@ -115,6 +115,14 @@ class InteractionBuilder
      */
     public function setTimestamp($timestamp)
     {
+        if (is_string($timestamp)) {
+            $timestamp = Carbon::parse($timestamp);
+        }
+
+        if ($timestamp instanceof Carbon) {
+            $timestamp = $timestamp->timestamp;
+        }
+
         $this->timestamp = $timestamp;
         return $this;
     }

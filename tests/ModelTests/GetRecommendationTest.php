@@ -115,45 +115,4 @@ class GetRecommendationTest extends BaseTest
             ],
         ], $actualRecommendedItemsResponse);
     }
-
-    public function testSchemaCasting()
-    {
-        $test = new class extends Model {
-            use ReconItem;
-
-            protected function define(SchemaDefinition $definition) {
-                $definition->boolean('::boolean::');
-                $definition->int('::int::');
-                $definition->long('::long::');
-                $definition->double('::double::');
-                $definition->float('::float::');
-                $definition->string('::string::');
-                $definition->category('::category::');
-            }
-        };
-
-        $longCarbon = now();
-
-        $test->forceFill([
-            '::boolean::' => 1,
-            '::int::' => '45',
-            '::long::' => $longCarbon,
-            '::double::' => 1234.432,
-            '::float::' => '432.43',
-            '::string::' => 34,
-            '::category::' => 'red',
-        ]);
-
-        $json = $test->toReconJson();
-
-        $this->assertSame([
-            '::boolean::' => true,
-            '::int::' => 45,
-            '::long::' => $longCarbon->timestamp,
-            '::double::' => 1234.432,
-            '::float::' => 432.43,
-            '::string::' => '34',
-            '::category::' => 'red',
-        ], $json);
-    }
 }

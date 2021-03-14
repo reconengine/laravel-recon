@@ -6,7 +6,7 @@
 return [
     'token' => env('RECON_TOKEN'),
 
-    'database' => env('RECON_DATABASE'),
+    'database' => env('RECON_DATABASE', 'default'),
 
-//    'sandbox' => false,
+    'queue' => env('RECON_QUEUE', false),
 ];

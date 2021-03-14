@@ -4,9 +4,9 @@
 namespace Recon\Tests\Facades;
 
 
+use Recon\Models\ReconItem;
+use Recon\Models\ReconUser;
 use Recon\ReconFacade;
-use Recon\ReconItem;
-use Recon\ReconUser;
 use Recon\Tests\BaseTest;
 use Recon\Tests\Models\TestModelItem;
 use Recon\Tests\Models\TestModelUser;

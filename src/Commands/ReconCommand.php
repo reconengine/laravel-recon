@@ -7,8 +7,8 @@ namespace Recon\Commands;
 use Recon\Api\ApiFacade;
 use Recon\Exceptions\ReconCommandException;
 use Recon\Exceptions\ReconConfigValidationException;
-use Recon\ReconItem;
-use Recon\ReconUser;
+use Recon\Models\ReconItem;
+use Recon\Models\ReconUser;
 
 class ReconCommand extends BaseReconCommand
 {

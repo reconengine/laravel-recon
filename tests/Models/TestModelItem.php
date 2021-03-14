@@ -6,7 +6,7 @@ namespace Recon\Tests\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Recon\Helpers\SchemaDefinition;
-use Recon\ReconItem;
+use Recon\Models\ReconItem;
 
 class TestModelItem extends Model
 {

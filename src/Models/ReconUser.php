@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Recon;
+namespace Recon\Models;
 
 
 use Recon\Api\ApiFacade;

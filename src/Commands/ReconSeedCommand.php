@@ -4,12 +4,10 @@
 namespace Recon\Commands;
 
 
-use Illuminate\Console\Command;
-use Illuminate\Support\Collection;
-use Recon\Api\ApiFacade;
-use Recon\Exceptions\ReconCommandException;
-use Recon\ReconItem;
-use Recon\ReconUser;
+use Illuminate\Contracts\Events\Dispatcher;
+use Recon\Events\ModelsImported;
+use Recon\Models\ReconItem;
+use Recon\Models\ReconUser;
 
 class ReconSeedCommand extends BaseReconCommand
 {
@@ -40,49 +38,55 @@ class ReconSeedCommand extends BaseReconCommand
     /**
      * Execute the console command.
      *
+     * @param Dispatcher $events
      * @return int
      */
-    public function handle()
+    public function handle(Dispatcher $events)
     {
         if ($this->option('users')) {
-            $this->seedUsers();
+            $this->seedUsers($events);
         }
 
         if ($this->option('items')) {
-            $this->seedItems();
+            $this->seedItems($events);
         }
 
         return 0;
     }
 
-    protected function seedUsers()
+    protected function seedUsers(Dispatcher $events)
     {
         $userClass = $this->findSchemaClass(ReconUser::class);
 
         $this->line("Seeding with User class: {$userClass}");
         $this->line('');
 
+        $events->listen(ModelsImported::class, function ($event) use ($userClass) {
+            $key = $event->models->last()->id;
 
-        $userClass::orderBy('id')->chunk(250, function (Collection $users) {
-            ApiFacade::putUsers($users);
-            $firstId = $users->first()->id;
-            $lastId = $users->last()->id;
-            $this->info("Imported users {$firstId}-{$lastId}");
+            $this->line('<comment>Imported ['.$userClass.'] models up to ID:</comment> '.$key);
         });
+
+        $userClass::makeAllTrainable();
+
+        $events->forget(ModelsImported::class);
     }
 
-    protected function seedItems()
+    protected function seedItems(Dispatcher $events)
     {
         $itemClass = $this->findSchemaClass(ReconItem::class);
 
         $this->line("Seeding with Item class: {$itemClass}");
         $this->line('');
 
-        $itemClass::orderBy('id')->chunk(250, function (Collection $items) {
-            ApiFacade::putItems($items);
-            $firstId = $items->first()->id;
-            $lastId = $items->last()->id;
-            $this->info("Imported items {$firstId}-{$lastId}");
+        $events->listen(ModelsImported::class, function ($event) use ($itemClass) {
+            $key = $event->models->last()->id;
+
+            $this->line('<comment>Imported ['.$itemClass.'] models up to ID:</comment> '.$key);
         });
+
+        $itemClass::makeAllTrainable();
+
+        $events->forget(ModelsImported::class);
     }
 }
