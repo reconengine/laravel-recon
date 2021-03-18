@@ -279,7 +279,7 @@ class ReconCommand extends BaseReconCommand
      */
     protected function handleNevermind()
     {
-        $this->line('I appreciate you 👋');
+        $this->line('We appreciate you 👋');
     }
 
     protected function checkForNetworkError()

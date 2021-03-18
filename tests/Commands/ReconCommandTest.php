@@ -163,7 +163,7 @@ class ReconCommandTest extends BaseTest
         $this->artisan('recon')
             ->expectsOutput('**  1. ::database1:: (default)')
             ->expectsQuestion("Which action would you like to perform on '::database1::'?", 'Nevermind, just lookin\'')
-            ->expectsOutput('I appreciate you 👋')
+            ->expectsOutput('We appreciate you 👋')
             ->assertExitCode(0)
         ;
     }
