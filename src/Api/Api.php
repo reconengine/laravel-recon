@@ -5,14 +5,12 @@ namespace Recon\Api;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
-use Recon\Exceptions\DatatypeMismatchException;
 use Recon\Helpers\InteractionBuilder;
 use Recon\Helpers\SchemaDefinition;
-use Recon\ReconItem;
 
 class Api
 {
-    const HOST = 'http://localhost:8000/api';//'https://staging.reconengine.ai/api';
+    const HOST = 'https://reconengine.ai/api';
 
     protected $database = '';
     protected $config = [];

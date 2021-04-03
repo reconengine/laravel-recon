@@ -4,9 +4,7 @@
 namespace Recon\Commands;
 
 
-use Illuminate\Console\Command;
 use Recon\Api\ApiFacade;
-use Recon\Exceptions\ReconCommandException;
 
 class ReconRetrainCommand extends BaseReconCommand
 {

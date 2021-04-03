@@ -5,14 +5,9 @@ namespace Recon\Commands;
 
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Artisan;
-use Recon\Api\ApiFacade;
-use Recon\Exceptions\ReconCommandException;
 use Recon\Exceptions\ReconConfigValidationException;
 use Recon\Helpers\SchemaDefinition;
 use Recon\ReconFacade;
-use Recon\ReconItem;
-use Recon\ReconUser;
 
 class BaseReconCommand extends Command
 {

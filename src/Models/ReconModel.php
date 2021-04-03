@@ -4,7 +4,6 @@
 namespace Recon\Models;
 
 
-use Illuminate\Routing\Pipeline;
 use Illuminate\Support\Collection as BaseCollection;
 use Recon\Helpers\SchemaDefinition;
 use Recon\Jobs\MakeTrainableJob;

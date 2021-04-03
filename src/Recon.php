@@ -3,7 +3,6 @@
 namespace Recon;
 
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Http;
 
 class Recon
 {
