@@ -1,4 +1,4 @@
-# Recon for Laravel [beta]: World-class recommendation engine brought to Laravel
+# Recon for Laravel: World-class recommendation engine brought to Laravel
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/reconengine/recon-laravel.svg?style=flat-square)](https://packagist.org/packages/reconengine/recon-laravel)
 [![Build Status](https://img.shields.io/travis/reconengine/recon-laravel/master.svg?style=flat-square)](https://travis-ci.org/reconengine/recon-laravel)
