@@ -90,4 +90,146 @@ class InteractionBuilderTest extends BaseTest
                 && $request['interactions'][0]['recommendation_id'] === "::rec_id::";
         });
     }
+
+    // batch testing
+    /** @test */
+    public function interactionBuilderWillSendBatchHttpRequestWithCollection()
+    {
+        Http::fake();
+
+        Session::shouldReceive('getId')->andReturn('abc');
+
+        $interaction1 = (new InteractionBuilder('click'));
+        $interaction2 = (new InteractionBuilder('view'));
+        InteractionBuilder::sendBatch(collect([
+            $interaction1,
+            $interaction2,
+        ]));
+
+        Http::assertSent(function (Request $request) use ($interaction1, $interaction2) {
+            return Str::contains($request->url(), ['/api/databases/::database::/interactions'])
+                && $request->method() === 'POST'
+                && $request['interactions'][0]['session_id'] === 'abc'
+                && $request['interactions'][0]['type'] === 'click'
+                && $request['interactions'][0]['uid'] === null
+                && $request['interactions'][0]['timestamp'] === $interaction1->timestamp
+                && $request['interactions'][0]['value'] === null
+                && $request['interactions'][0]['iid'] === null
+                && $request['interactions'][0]['impressions'] === null
+                && $request['interactions'][0]['metadata'] === null
+                && $request['interactions'][0]['recommendation_id'] === null
+                && $request['interactions'][1]['session_id'] === 'abc'
+                && $request['interactions'][1]['type'] === 'view'
+                && $request['interactions'][1]['uid'] === null
+                && $request['interactions'][1]['timestamp'] === $interaction2->timestamp
+                && $request['interactions'][1]['value'] === null
+                && $request['interactions'][1]['iid'] === null
+                && $request['interactions'][1]['impressions'] === null
+                && $request['interactions'][1]['metadata'] === null
+                && $request['interactions'][1]['recommendation_id'] === null;
+        });
+    }
+
+    /** @test */
+    public function interactionBuilderWillSendBatchHttpRequestWithArray()
+    {
+        Http::fake();
+
+        Session::shouldReceive('getId')->andReturn('abc');
+
+        $interaction1 = (new InteractionBuilder('click'));
+        $interaction2 = (new InteractionBuilder('view'));
+        InteractionBuilder::sendBatch([
+            $interaction1,
+            $interaction2,
+        ]);
+
+        Http::assertSent(function (Request $request) use ($interaction1, $interaction2) {
+            return Str::contains($request->url(), ['/api/databases/::database::/interactions'])
+                && $request->method() === 'POST'
+                && $request['interactions'][0]['session_id'] === 'abc'
+                && $request['interactions'][0]['type'] === 'click'
+                && $request['interactions'][0]['uid'] === null
+                && $request['interactions'][0]['timestamp'] === $interaction1->timestamp
+                && $request['interactions'][0]['value'] === null
+                && $request['interactions'][0]['iid'] === null
+                && $request['interactions'][0]['impressions'] === null
+                && $request['interactions'][0]['metadata'] === null
+                && $request['interactions'][0]['recommendation_id'] === null
+                && $request['interactions'][1]['session_id'] === 'abc'
+                && $request['interactions'][1]['type'] === 'view'
+                && $request['interactions'][1]['uid'] === null
+                && $request['interactions'][1]['timestamp'] === $interaction2->timestamp
+                && $request['interactions'][1]['value'] === null
+                && $request['interactions'][1]['iid'] === null
+                && $request['interactions'][1]['impressions'] === null
+                && $request['interactions'][1]['metadata'] === null
+                && $request['interactions'][1]['recommendation_id'] === null;
+        });
+    }
+
+    /** @test */
+    public function interactionBuilderWillSendBatchHttpRequestWithInstance()
+    {
+        Http::fake();
+
+        Session::shouldReceive('getId')->andReturn('abc');
+
+        $interaction1 = (new InteractionBuilder('click'));
+        InteractionBuilder::sendBatch(
+            $interaction1
+        );
+
+        Http::assertSent(function (Request $request) use ($interaction1) {
+            return Str::contains($request->url(), ['/api/databases/::database::/interactions'])
+                && $request->method() === 'POST'
+                && $request['interactions'][0]['session_id'] === 'abc'
+                && $request['interactions'][0]['type'] === 'click'
+                && $request['interactions'][0]['uid'] === null
+                && $request['interactions'][0]['timestamp'] === $interaction1->timestamp
+                && $request['interactions'][0]['value'] === null
+                && $request['interactions'][0]['iid'] === null
+                && $request['interactions'][0]['impressions'] === null
+                && $request['interactions'][0]['metadata'] === null
+                && $request['interactions'][0]['recommendation_id'] === null;
+        });
+    }
+
+    /** @test */
+    public function interactionBuilderWillSendBatchHttpRequestWithSingularParams()
+    {
+        Http::fake();
+
+        Session::shouldReceive('getId')->andReturn('abc');
+
+        $interaction1 = (new InteractionBuilder('click'));
+        $interaction2 = (new InteractionBuilder('view'));
+        InteractionBuilder::sendBatch(
+            $interaction1,
+            $interaction2
+        );
+
+        Http::assertSent(function (Request $request) use ($interaction1, $interaction2) {
+            return Str::contains($request->url(), ['/api/databases/::database::/interactions'])
+                && $request->method() === 'POST'
+                && $request['interactions'][0]['session_id'] === 'abc'
+                && $request['interactions'][0]['type'] === 'click'
+                && $request['interactions'][0]['uid'] === null
+                && $request['interactions'][0]['timestamp'] === $interaction1->timestamp
+                && $request['interactions'][0]['value'] === null
+                && $request['interactions'][0]['iid'] === null
+                && $request['interactions'][0]['impressions'] === null
+                && $request['interactions'][0]['metadata'] === null
+                && $request['interactions'][0]['recommendation_id'] === null
+                && $request['interactions'][1]['session_id'] === 'abc'
+                && $request['interactions'][1]['type'] === 'view'
+                && $request['interactions'][1]['uid'] === null
+                && $request['interactions'][1]['timestamp'] === $interaction2->timestamp
+                && $request['interactions'][1]['value'] === null
+                && $request['interactions'][1]['iid'] === null
+                && $request['interactions'][1]['impressions'] === null
+                && $request['interactions'][1]['metadata'] === null
+                && $request['interactions'][1]['recommendation_id'] === null;
+        });
+    }
 }

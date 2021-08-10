@@ -121,13 +121,17 @@ class Api
     }
 
     /**
-     * @param InteractionBuilder $interactionBuilder
+     * @param mixed $interactionBuilder
      * @return \Illuminate\Http\Client\Response
      */
-    public function putInteractions(InteractionBuilder $interactionBuilder)
+    public function putInteractions($interactionBuilder)
     {
+        $collectionOfInteractionBuilders = Collection::wrap($interactionBuilder);
+
+        $interactionJson = $collectionOfInteractionBuilders->map->toJson()->toArray();
+
         return $this->http()->post(self::HOST . "/databases/{$this->database}/interactions", [
-            'interactions' => $interactionBuilder->toJson(),
+            'interactions' => $interactionJson,
         ])->throw();
     }
 

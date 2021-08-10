@@ -5,6 +5,7 @@ namespace Recon\Helpers;
 
 
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
 use Recon\Api\ApiFacade;
 
 class InteractionBuilder
@@ -85,17 +86,15 @@ class InteractionBuilder
     public function toJson()
     {
         return [
-            [ // yes, this needs to be an array of array.
-                'session_id' => $this->sessionId,
-                'type' => $this->action,
-                'timestamp' => $this->timestamp,
-                'value' => $this->value,
-                'iid' => $this->itemId,
-                'uid' => $this->userId,
-                'impressions' => $this->impressions,
-                'metadata' => $this->metadata,
-                'recommendation_id' => $this->recommendationId,
-            ],
+            'session_id' => $this->sessionId,
+            'type' => $this->action,
+            'timestamp' => $this->timestamp,
+            'value' => $this->value,
+            'iid' => $this->itemId,
+            'uid' => $this->userId,
+            'impressions' => $this->impressions,
+            'metadata' => $this->metadata,
+            'recommendation_id' => $this->recommendationId,
         ];
     }
 
@@ -197,8 +196,22 @@ class InteractionBuilder
         return $this;
     }
 
+    /**
+     * @return \Illuminate\Http\Client\Response
+     */
     public function send()
     {
         return ApiFacade::putInteractions($this);
+    }
+
+    /**
+     * @param mixed $interactions
+     * @return \Illuminate\Http\Client\Response
+     */
+    public static function sendBatch($interactions)
+    {
+        $interactions = func_num_args() > 1 ? func_get_args() : $interactions;
+
+        return ApiFacade::putInteractions($interactions);
     }
 }
