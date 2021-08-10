@@ -27,7 +27,7 @@ class TrainableScope implements Scope
     public function extend(EloquentBuilder $builder)
     {
         $builder->macro('trainable', function (EloquentBuilder $builder) {
-            $builder->chunkById(500, function ($models) {
+            $builder->chunkById(250, function ($models) {
                 $models->filter->isTrainable()->trainable();
 
                 event(new ModelsImported($models));
