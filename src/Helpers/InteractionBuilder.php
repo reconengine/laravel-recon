@@ -56,6 +56,11 @@ class InteractionBuilder
      */
     protected $recommendationId = null;
 
+    /**
+     * @var null|string Recommended! An optional identifier for this interaction.
+     */
+    protected $clientId = null;
+
 
     /**
      * @param $action string The type of interaction. Ex: 'purchase', 'click', 'view', 'review'.
@@ -87,6 +92,7 @@ class InteractionBuilder
     {
         return [
             'session_id' => $this->sessionId,
+            'client_id' => $this->clientId,
             'type' => $this->action,
             'timestamp' => $this->timestamp,
             'value' => $this->value,
@@ -105,6 +111,16 @@ class InteractionBuilder
     public function setSessionId($sessionId)
     {
         $this->sessionId = $sessionId;
+        return $this;
+    }
+
+    /**
+     * @param mixed $clientId
+     * @return InteractionBuilder
+     */
+    public function setClientId($clientId)
+    {
+        $this->clientId = $clientId;
         return $this;
     }
 

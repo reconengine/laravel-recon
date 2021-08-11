@@ -46,7 +46,8 @@ class InteractionBuilderTest extends BaseTest
                 && $request['interactions'][0]['iid'] === null
                 && $request['interactions'][0]['impressions'] === null
                 && $request['interactions'][0]['metadata'] === null
-                && $request['interactions'][0]['recommendation_id'] === null;
+                && $request['interactions'][0]['recommendation_id'] === null
+                && $request['interactions'][0]['client_id'] === null;
         });
     }
 
@@ -64,6 +65,7 @@ class InteractionBuilderTest extends BaseTest
             ->setTimestamp(now()->midDay())
             ->setUserId(1534)
             ->setItemId(9423)
+            ->setClientId(14)
             ->setSessionId('::session::')
             ->setAction('::action::')
             ->setRecommendationId('::rec_id::')
@@ -87,7 +89,8 @@ class InteractionBuilderTest extends BaseTest
                     'duration' => 156,
                     'genres' => 'Trap|Wrap|Many',
                 ]
-                && $request['interactions'][0]['recommendation_id'] === "::rec_id::";
+                && $request['interactions'][0]['recommendation_id'] === "::rec_id::"
+                && $request['interactions'][0]['client_id'] === 14;
         });
     }
 
@@ -118,6 +121,7 @@ class InteractionBuilderTest extends BaseTest
                 && $request['interactions'][0]['impressions'] === null
                 && $request['interactions'][0]['metadata'] === null
                 && $request['interactions'][0]['recommendation_id'] === null
+                && $request['interactions'][0]['client_id'] === null
                 && $request['interactions'][1]['session_id'] === 'abc'
                 && $request['interactions'][1]['type'] === 'view'
                 && $request['interactions'][1]['uid'] === null
@@ -126,7 +130,8 @@ class InteractionBuilderTest extends BaseTest
                 && $request['interactions'][1]['iid'] === null
                 && $request['interactions'][1]['impressions'] === null
                 && $request['interactions'][1]['metadata'] === null
-                && $request['interactions'][1]['recommendation_id'] === null;
+                && $request['interactions'][1]['recommendation_id'] === null
+                && $request['interactions'][1]['client_id'] === null;
         });
     }
 
@@ -156,6 +161,7 @@ class InteractionBuilderTest extends BaseTest
                 && $request['interactions'][0]['impressions'] === null
                 && $request['interactions'][0]['metadata'] === null
                 && $request['interactions'][0]['recommendation_id'] === null
+                && $request['interactions'][0]['client_id'] === null
                 && $request['interactions'][1]['session_id'] === 'abc'
                 && $request['interactions'][1]['type'] === 'view'
                 && $request['interactions'][1]['uid'] === null
@@ -164,7 +170,8 @@ class InteractionBuilderTest extends BaseTest
                 && $request['interactions'][1]['iid'] === null
                 && $request['interactions'][1]['impressions'] === null
                 && $request['interactions'][1]['metadata'] === null
-                && $request['interactions'][1]['recommendation_id'] === null;
+                && $request['interactions'][1]['recommendation_id'] === null
+                && $request['interactions'][1]['client_id'] === null;
         });
     }
 
@@ -191,7 +198,8 @@ class InteractionBuilderTest extends BaseTest
                 && $request['interactions'][0]['iid'] === null
                 && $request['interactions'][0]['impressions'] === null
                 && $request['interactions'][0]['metadata'] === null
-                && $request['interactions'][0]['recommendation_id'] === null;
+                && $request['interactions'][0]['recommendation_id'] === null
+                && $request['interactions'][0]['client_id'] === null;
         });
     }
 
@@ -221,6 +229,7 @@ class InteractionBuilderTest extends BaseTest
                 && $request['interactions'][0]['impressions'] === null
                 && $request['interactions'][0]['metadata'] === null
                 && $request['interactions'][0]['recommendation_id'] === null
+                && $request['interactions'][0]['client_id'] === null
                 && $request['interactions'][1]['session_id'] === 'abc'
                 && $request['interactions'][1]['type'] === 'view'
                 && $request['interactions'][1]['uid'] === null
@@ -229,7 +238,8 @@ class InteractionBuilderTest extends BaseTest
                 && $request['interactions'][1]['iid'] === null
                 && $request['interactions'][1]['impressions'] === null
                 && $request['interactions'][1]['metadata'] === null
-                && $request['interactions'][1]['recommendation_id'] === null;
+                && $request['interactions'][1]['recommendation_id'] === null
+                && $request['interactions'][1]['client_id'] === null;
         });
     }
 }
